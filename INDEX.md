@@ -18,5 +18,6 @@ Single source of truth for major project documents. Agents and humans should con
 
 ## Status
 
-- **Phase:** Design complete; implementation not started.
+- **Phase:** P0 menubar shell implemented (mock usage); live Grok fetch is P1.
 - **V1 scope:** macOS menubar app; Grok Code only; CLI auth only.
+- **App sources:** `SimpleUsageBar/` + `SimpleUsageBar.xcodeproj` + `SimpleUsageBarTests/`
