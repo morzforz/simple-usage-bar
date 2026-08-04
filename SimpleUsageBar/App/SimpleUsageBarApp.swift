@@ -1,5 +1,5 @@
 // SimpleUsageBarApp.swift
-// Menu-bar accessory app entry. P1: live Grok usage via CLI auth.
+// Menu-bar accessory: live Grok usage with band tint (P2).
 
 import SwiftUI
 
@@ -13,6 +13,8 @@ struct SimpleUsageBarApp: App {
         } label: {
             Text(model.statusItemTitle)
                 .monospacedDigit()
+                .foregroundStyle(model.usesBandTint ? model.usageBand.color : Color.primary)
+                .opacity(model.isStale ? 0.75 : 1.0)
                 .help(model.tooltipText)
         }
         .menuBarExtraStyle(.window)

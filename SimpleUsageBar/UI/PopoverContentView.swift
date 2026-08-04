@@ -1,5 +1,5 @@
 // PopoverContentView.swift
-// Popover: live/mock usage, status messages, Refresh, Quit.
+// Popover: usage bands, status messages, Launch at Login, Refresh, Quit.
 
 import SwiftUI
 
@@ -20,7 +20,7 @@ struct PopoverContentView: View {
             if let message = model.state.statusMessage {
                 Text(message)
                     .font(.caption)
-                    .foregroundStyle(.orange)
+                    .foregroundStyle(statusMessageColor)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityIdentifier("statusMessage")
             }
@@ -29,6 +29,7 @@ struct PopoverContentView: View {
                 Text(model.usedPercentText)
                     .font(.system(size: 36, weight: .semibold, design: .rounded))
                     .monospacedDigit()
+                    .foregroundStyle(model.usesBandTint ? model.usageBand.color : Color.primary)
                     .accessibilityIdentifier("usedPercentLabel")
                 Text("used")
                     .font(.subheadline)
@@ -37,6 +38,8 @@ struct PopoverContentView: View {
 
             ProgressView(value: model.progressValue, total: 100)
                 .progressViewStyle(.linear)
+                .tint(model.usesBandTint ? model.usageBand.color : Color.accentColor)
+                .accessibilityIdentifier("usageProgress")
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Resets \(model.resetRelativeText)")
@@ -59,6 +62,22 @@ struct PopoverContentView: View {
                 .foregroundStyle(.tertiary)
 
             Divider()
+
+            Toggle(
+                "Launch at Login",
+                isOn: Binding(
+                    get: { model.launchAtLoginEnabled },
+                    set: { model.setLaunchAtLoginEnabled($0) }
+                )
+            )
+            .accessibilityIdentifier("launchAtLoginToggle")
+
+            if let loginMessage = model.launchAtLoginMessage {
+                Text(loginMessage)
+                    .font(.caption2)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             HStack {
                 Button {
@@ -86,6 +105,17 @@ struct PopoverContentView: View {
         .frame(width: 300)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("usagePopover")
+    }
+
+    private var statusMessageColor: Color {
+        switch model.state {
+        case .stale:
+            return .orange
+        case .unauthenticated, .error, .teamUnsupported:
+            return .orange
+        default:
+            return .secondary
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 // AppModel.swift
-// Observable app state: fetch-on-launch, timer, manual refresh.
+// Observable app state: fetch-on-launch, timer, auth watch, manual refresh.
 
 import Foundation
 import Observation
@@ -10,21 +10,26 @@ final class AppModel {
     private(set) var state: AppState = .loading
     private(set) var isRefreshing = false
     private(set) var lastRefreshAttempt: Date?
+    private(set) var launchAtLoginEnabled: Bool = LaunchAtLogin.isEnabled
+    private(set) var launchAtLoginMessage: String?
 
     private let provider: any UsageProviding
+    private let authStore: GrokAuthStore
     private let refreshInterval: TimeInterval
     private let minimumRefreshInterval: TimeInterval
-    private var refreshTask: Task<Void, Never>?
     private var timerTask: Task<Void, Never>?
     private var inFlight: Task<Void, Never>?
+    private var authWatcher: AuthFileWatcher?
 
     init(
         provider: any UsageProviding = GrokProvider(),
+        authStore: GrokAuthStore = GrokAuthStore(),
         refreshInterval: TimeInterval = 5 * 60,
         minimumRefreshInterval: TimeInterval = 30,
         autoStart: Bool = true
     ) {
         self.provider = provider
+        self.authStore = authStore
         self.refreshInterval = refreshInterval
         self.minimumRefreshInterval = minimumRefreshInterval
         if autoStart {
@@ -33,9 +38,10 @@ final class AppModel {
     }
 
     func stop() {
-        refreshTask?.cancel()
         timerTask?.cancel()
         inFlight?.cancel()
+        authWatcher?.stop()
+        authWatcher = nil
     }
 
     // MARK: - Display helpers
@@ -44,7 +50,10 @@ final class AppModel {
         switch state {
         case .loading:
             return "G …"
-        case let .ready(snapshot), let .stale(snapshot, _):
+        case let .ready(snapshot):
+            return UsageDisplayFormatter.statusItemTitle(for: snapshot)
+        case let .stale(snapshot, _):
+            // Keep percent visible; stale is signaled via tint + popover message.
             return UsageDisplayFormatter.statusItemTitle(for: snapshot)
         case .unauthenticated:
             return "G —"
@@ -53,6 +62,20 @@ final class AppModel {
         case .teamUnsupported:
             return "G —"
         }
+    }
+
+    var usageBand: UsageBand {
+        UsageDisplayFormatter.usageBand(for: state.snapshot)
+    }
+
+    /// Whether menubar should use band tint (ready/stale with data).
+    var usesBandTint: Bool {
+        state.snapshot != nil
+    }
+
+    var isStale: Bool {
+        if case .stale = state { return true }
+        return false
     }
 
     var usedPercentText: String {
@@ -71,6 +94,10 @@ final class AppModel {
     }
 
     var tooltipText: String {
+        if case let .stale(snapshot, message) = state {
+            let base = UsageDisplayFormatter.tooltip(for: snapshot)
+            return "\(base) · stale: \(message)"
+        }
         if let snapshot = state.snapshot {
             return UsageDisplayFormatter.tooltip(for: snapshot)
         }
@@ -96,14 +123,16 @@ final class AppModel {
         guard let snapshot = state.snapshot else {
             return "CLI auth"
         }
-        switch snapshot.source {
-        case .billingApi:
-            return "CLI auth · live"
-        case .mock:
-            return "mock"
-        case .agentRpc:
-            return "CLI auth · RPC"
+        let freshness: String
+        switch state {
+        case .stale:
+            freshness = "stale"
+        case .ready:
+            freshness = snapshot.source == .billingApi ? "live" : snapshot.source.rawValue
+        default:
+            freshness = snapshot.source.rawValue
         }
+        return "CLI auth · \(freshness)"
     }
 
     var progressValue: Double {
@@ -113,15 +142,30 @@ final class AppModel {
     // MARK: - Lifecycle
 
     func start() {
+        startAuthWatcher()
         Task { await refresh(force: true) }
         timerTask?.cancel()
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: UInt64((self?.refreshInterval ?? 300) * 1_000_000_000))
+                let interval = self?.refreshInterval ?? 300
+                try? await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
                 guard !Task.isCancelled else { break }
                 await self?.refresh(force: false)
             }
         }
+        refreshLaunchAtLoginStatus()
+    }
+
+    private func startAuthWatcher() {
+        authWatcher?.stop()
+        let watcher = AuthFileWatcher()
+        watcher.onChange = { [weak self] in
+            Task { @MainActor in
+                await self?.refresh(force: true)
+            }
+        }
+        watcher.start(authFileURL: authStore.authFileURL())
+        authWatcher = watcher
     }
 
     func refresh(force: Bool = true) async {
@@ -148,7 +192,6 @@ final class AppModel {
         defer { isRefreshing = false }
         lastRefreshAttempt = Date()
 
-        // Keep prior snapshot visible while reloading when we already have data.
         if state.snapshot == nil {
             state = .loading
         }
@@ -178,5 +221,21 @@ final class AppModel {
                 state = .error(error.localizedDescription)
             }
         }
+    }
+
+    // MARK: - Launch at Login
+
+    func refreshLaunchAtLoginStatus() {
+        launchAtLoginEnabled = LaunchAtLogin.isEnabled
+    }
+
+    func setLaunchAtLoginEnabled(_ enabled: Bool) {
+        do {
+            try LaunchAtLogin.setEnabled(enabled)
+            launchAtLoginMessage = nil
+        } catch {
+            launchAtLoginMessage = error.localizedDescription
+        }
+        refreshLaunchAtLoginStatus()
     }
 }
