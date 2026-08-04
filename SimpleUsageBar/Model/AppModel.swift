@@ -19,6 +19,8 @@ final class AppModel {
     private let minimumRefreshInterval: TimeInterval
     private var timerTask: Task<Void, Never>?
     private var inFlight: Task<Void, Never>?
+    /// Set when a force refresh arrives while a fetch is already running (e.g. auth file change).
+    private var pendingForceRefresh = false
     private var authWatcher: AuthFileWatcher?
 
     init(
@@ -174,17 +176,38 @@ final class AppModel {
                 return
             }
         }
+
+        // Coalesce concurrent callers onto one in-flight fetch. Force callers
+        // (auth-file watch, manual Refresh) must not be dropped: queue a follow-up.
         if let existing = inFlight {
+            if force {
+                pendingForceRefresh = true
+            }
             await existing.value
+            if force {
+                await drainPendingForceRefresh()
+            }
             return
         }
 
+        await executeRefreshCycle()
+    }
+
+    private func executeRefreshCycle() async {
         let task = Task { @MainActor in
             await self.performRefresh()
         }
         inFlight = task
         await task.value
         inFlight = nil
+        await drainPendingForceRefresh()
+    }
+
+    private func drainPendingForceRefresh() async {
+        guard pendingForceRefresh else { return }
+        guard inFlight == nil else { return }
+        pendingForceRefresh = false
+        await executeRefreshCycle()
     }
 
     private func performRefresh() async {
