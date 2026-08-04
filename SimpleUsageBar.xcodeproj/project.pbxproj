@@ -14,6 +14,15 @@
 		A10000000000000000000005 /* PopoverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* PopoverContentView.swift */; };
 		A10000000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000006 /* Assets.xcassets */; };
 		A10000000000000000000007 /* UsageDisplayFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* UsageDisplayFormatterTests.swift */; };
+		A1000000000000000000000B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* AppState.swift */; };
+		A1000000000000000000000C /* GrokAuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* GrokAuthStore.swift */; };
+		A1000000000000000000000D /* GrokCreditsProtoParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000D /* GrokCreditsProtoParser.swift */; };
+		A1000000000000000000000E /* GrokBillingClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* GrokBillingClient.swift */; };
+		A1000000000000000000000F /* GrokProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* GrokProvider.swift */; };
+		A10000000000000000000010 /* GrokAuthStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* GrokAuthStoreTests.swift */; };
+		A10000000000000000000011 /* GrokCreditsProtoParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* GrokCreditsProtoParserTests.swift */; };
+		A10000000000000000000012 /* GrokBillingClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* GrokBillingClientTests.swift */; };
+		A10000000000000000000013 /* get_grok_credits_config_sample.bin in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* get_grok_credits_config_sample.bin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +46,15 @@
 		A20000000000000000000008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000009 /* SimpleUsageBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimpleUsageBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2000000000000000000000A /* SimpleUsageBarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleUsageBarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000B /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* GrokAuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokAuthStore.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* GrokCreditsProtoParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokCreditsProtoParser.swift; sourceTree = "<group>"; };
+		A2000000000000000000000E /* GrokBillingClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokBillingClient.swift; sourceTree = "<group>"; };
+		A2000000000000000000000F /* GrokProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokProvider.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* GrokAuthStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokAuthStoreTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* GrokCreditsProtoParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokCreditsProtoParserTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* GrokBillingClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokBillingClientTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000013 /* get_grok_credits_config_sample.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = get_grok_credits_config_sample.bin; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +89,7 @@
 			children = (
 				A70000000000000000000005 /* App */,
 				A70000000000000000000006 /* Model */,
+				A70000000000000000000008 /* Providers */,
 				A70000000000000000000007 /* UI */,
 				A20000000000000000000006 /* Assets.xcassets */,
 				A20000000000000000000008 /* Info.plist */,
@@ -82,6 +101,10 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000007 /* UsageDisplayFormatterTests.swift */,
+				A20000000000000000000010 /* GrokAuthStoreTests.swift */,
+				A20000000000000000000011 /* GrokCreditsProtoParserTests.swift */,
+				A20000000000000000000012 /* GrokBillingClientTests.swift */,
+				A7000000000000000000000A /* Fixtures */,
 			);
 			path = SimpleUsageBarTests;
 			sourceTree = "<group>";
@@ -107,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000002 /* AppModel.swift */,
+				A2000000000000000000000B /* AppState.swift */,
 				A20000000000000000000003 /* UsageSnapshot.swift */,
 				A20000000000000000000004 /* UsageDisplayFormatter.swift */,
 			);
@@ -119,6 +143,33 @@
 				A20000000000000000000005 /* PopoverContentView.swift */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000008 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				A70000000000000000000009 /* Grok */,
+			);
+			path = Providers;
+			sourceTree = "<group>";
+		};
+		A70000000000000000000009 /* Grok */ = {
+			isa = PBXGroup;
+			children = (
+				A2000000000000000000000C /* GrokAuthStore.swift */,
+				A2000000000000000000000D /* GrokCreditsProtoParser.swift */,
+				A2000000000000000000000E /* GrokBillingClient.swift */,
+				A2000000000000000000000F /* GrokProvider.swift */,
+			);
+			path = Grok;
+			sourceTree = "<group>";
+		};
+		A7000000000000000000000A /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000013 /* get_grok_credits_config_sample.bin */,
+			);
+			path = Fixtures;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,6 +198,7 @@
 			buildPhases = (
 				A90000000000000000000002 /* Sources */,
 				A60000000000000000000002 /* Frameworks */,
+				AA0000000000000000000002 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -205,6 +257,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AA0000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000013 /* get_grok_credits_config_sample.bin in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -214,9 +274,14 @@
 			files = (
 				A10000000000000000000001 /* SimpleUsageBarApp.swift in Sources */,
 				A10000000000000000000002 /* AppModel.swift in Sources */,
+				A1000000000000000000000B /* AppState.swift in Sources */,
 				A10000000000000000000003 /* UsageSnapshot.swift in Sources */,
 				A10000000000000000000004 /* UsageDisplayFormatter.swift in Sources */,
 				A10000000000000000000005 /* PopoverContentView.swift in Sources */,
+				A1000000000000000000000C /* GrokAuthStore.swift in Sources */,
+				A1000000000000000000000D /* GrokCreditsProtoParser.swift in Sources */,
+				A1000000000000000000000E /* GrokBillingClient.swift in Sources */,
+				A1000000000000000000000F /* GrokProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +290,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000007 /* UsageDisplayFormatterTests.swift in Sources */,
+				A10000000000000000000010 /* GrokAuthStoreTests.swift in Sources */,
+				A10000000000000000000011 /* GrokCreditsProtoParserTests.swift in Sources */,
+				A10000000000000000000012 /* GrokBillingClientTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

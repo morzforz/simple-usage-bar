@@ -18,6 +18,6 @@ Single source of truth for major project documents. Agents and humans should con
 
 ## Status
 
-- **Phase:** P0 menubar shell implemented (mock usage); live Grok fetch is P1.
+- **Phase:** P1 live Grok usage via CLI auth + GetGrokCreditsConfig; P2 polish next.
 - **V1 scope:** macOS menubar app; Grok Code only; CLI auth only.
 - **App sources:** `SimpleUsageBar/` + `SimpleUsageBar.xcodeproj` + `SimpleUsageBarTests/`

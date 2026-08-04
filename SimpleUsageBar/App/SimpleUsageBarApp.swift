@@ -1,5 +1,5 @@
 // SimpleUsageBarApp.swift
-// Menu-bar accessory app entry. P0 shows mock usage only.
+// Menu-bar accessory app entry. P1: live Grok usage via CLI auth.
 
 import SwiftUI
 
@@ -11,7 +11,6 @@ struct SimpleUsageBarApp: App {
         MenuBarExtra {
             PopoverContentView(model: model)
         } label: {
-            // Visible menubar label is derived from the mock snapshot.
             Text(model.statusItemTitle)
                 .monospacedDigit()
                 .help(model.tooltipText)
