@@ -9,6 +9,7 @@ Single source of truth for major project documents. Agents and humans should con
 | [docs/design.md](docs/design.md) | **Primary design document** — goals, architecture, data model, UI, security, testing, MVP milestones |
 | [docs/grok-provider.md](docs/grok-provider.md) | Grok Code provider deep dive — CLI auth schema, billing endpoint, protobuf map, failure modes |
 | [docs/roadmap.md](docs/roadmap.md) | Near-term roadmap beyond MVP (providers, packaging, polish) |
+| [README.md](README.md) | User-facing build/run, CLI auth, unofficial API notes |
 
 ## Agent / process
 
@@ -18,5 +19,6 @@ Single source of truth for major project documents. Agents and humans should con
 
 ## Status
 
-- **Phase:** Design complete; implementation not started.
+- **Phase:** P2 polish shipped (auth watch, band colors, launch-at-login, README); further roadmap is optional notifications/providers.
 - **V1 scope:** macOS menubar app; Grok Code only; CLI auth only.
+- **App sources:** `SimpleUsageBar/` + `SimpleUsageBar.xcodeproj` + `SimpleUsageBarTests/`
