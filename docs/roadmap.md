@@ -8,11 +8,10 @@ Post-MVP directions for Simple Usage Bar. **V1 stays Grok-only and CLI-auth-only
 
 | Item | Notes |
 |------|--------|
-| README | Install, `grok login` prerequisite, unofficial API disclaimer |
+| README | **Done** (P2) |
 | Threshold notifications | Optional macOS notification at 80% / 100% used |
-| OIDC refresh (optional) | If idle token expiry is painful, implement refresh using CLI’s OIDC client metadata — only with careful secret handling |
 | Agent stdio billing | Prefer `x.ai/billing` when Grok Build exposes it on agent-stdio |
-| Secondary buckets | Surface protobuf field-7 windows if they prove user-meaningful |
+| Secondary buckets | Protobuf field-7 repeated windows — **plausible** per-product breakdown (Build / Chat / Imagine / …); keep exploratory until type ids are mapped against grok.com Usage UI |
 
 ---
 
@@ -30,6 +29,7 @@ Post-MVP directions for Simple Usage Bar. **V1 stays Grok-only and CLI-auth-only
 
 ## Explicitly not planned
 
+- **OIDC token refresh in-app** — out of scope. Primary use is alongside Grok Build, which refreshes `~/.grok/auth.json`; the app re-reads on file change. Idle-only expiry is not a product concern.
 - Becoming a full CodexBar-style multi-provider suite as a primary goal
 - Browser Keychain cookie scraping as a product pillar
 - Cloud backend or account system for Simple Usage Bar itself

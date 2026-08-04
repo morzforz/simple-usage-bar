@@ -388,7 +388,7 @@ CI (later): `xcodebuild test` on macOS runner; no live network in CI.
 | Risk | Impact | Mitigation |
 |------|--------|------------|
 | Undocumented billing API / protobuf drift | App shows parse errors | Fixture tests; defensive parser; clear error copy |
-| Access token expires without CLI use | False “logged out” | Messaging; optional future OIDC refresh; file watcher after user re-logins |
+| Access token expires without CLI use | False “logged out” | Messaging + auth-file watcher; **in-app OIDC refresh is out of scope** (CLI / Grok Build owns refresh for the intended tandem-use case) |
 | Team principals unsupported | No usage for team accounts | Detect `principal_type`; dedicated state |
 | xAI rate-limits or blocks clients | Fetch failures | Conservative poll; User-Agent identifiable; backoff |
 | ToS / unofficial API | Policy risk | Best-effort personal tool; no credential exfiltration; document unofficial status |
@@ -408,11 +408,11 @@ Resolved for v1 with defaults:
 | Multi-provider UI? | **No** (protocol only) |
 | Product name? | **Simple Usage Bar** |
 
-Deferred:
+Deferred / decided:
 
-1. Should we implement OIDC refresh ourselves if tokens expire while CLI is idle?
+1. **OIDC refresh in-app — out of scope.** App is used with Grok Build; CLI keeps `auth.json` warm; watcher reloads on change.
 2. Official public usage API from xAI — switch when/if available.
-3. Whether multi-bucket percents in the protobuf should surface as secondary lines later.
+3. Multi-bucket percents (protobuf field 7) — possible per-service breakdown (Build / Chat / Imagine, etc.); exploratory only until type ids are mapped.
 
 ---
 

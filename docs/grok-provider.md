@@ -209,7 +209,7 @@ message Timestamp {
 3. Accept both framed gRPC-web and (if ever seen) raw protobuf bodies.
 4. Unit-test against **binary fixtures** checked into `SimpleUsageBarTests/Fixtures/`.
 5. If field 1 is absent but period timestamps exist, use **0%** (zero usage), not a hard failure — matches observed “omitted means zero” behavior in sibling tools.
-6. Secondary field-7 buckets are **not** shown in v1 UI; optionally log counts in debug builds only.
+6. Secondary field-7 buckets are **not** shown in v1 UI. They are a **plausible** per-product / per-surface breakdown (e.g. Build vs Chat vs Imagine) matching the grok.com Usage UI shape, but type ids are reverse-engineered only — do not surface until mapped.
 
 ---
 
