@@ -13,10 +13,13 @@ final class AppModel {
     private(set) var lastRefreshAttempt: Date?
     private(set) var launchAtLoginEnabled: Bool = LaunchAtLogin.isEnabled
     private(set) var launchAtLoginMessage: String?
+    /// Directional pace for the current billing window (or insufficient data).
+    private(set) var paceOutcome: UsagePaceOutcome = .insufficientData
 
     private let provider: any UsageProviding
     private let authStore: GrokAuthStore
     private let thresholdNotifier: any UsageThresholdNotifying
+    private let paceStore: UsagePaceStore
     private let refreshInterval: TimeInterval
     private let minimumRefreshInterval: TimeInterval
     private var timerTask: Task<Void, Never>?
@@ -32,6 +35,7 @@ final class AppModel {
         provider: any UsageProviding = GrokProvider(),
         authStore: GrokAuthStore = GrokAuthStore(),
         thresholdNotifier: any UsageThresholdNotifying = UserNotificationsThresholdNotifier(),
+        paceStore: UsagePaceStore = UsagePaceStore(),
         refreshInterval: TimeInterval = 5 * 60,
         minimumRefreshInterval: TimeInterval = 30,
         autoStart: Bool = true
@@ -39,11 +43,17 @@ final class AppModel {
         self.provider = provider
         self.authStore = authStore
         self.thresholdNotifier = thresholdNotifier
+        self.paceStore = paceStore
         self.refreshInterval = refreshInterval
         self.minimumRefreshInterval = minimumRefreshInterval
         if autoStart {
             start()
         }
+    }
+
+    /// User-facing pace line for the popover.
+    var paceDisplayLine: String {
+        paceOutcome.displayLine
     }
 
     func stop() {
@@ -247,8 +257,10 @@ final class AppModel {
         }
 
         do {
-            let snapshot = try await provider.fetchUsage(now: Date())
+            let now = Date()
+            let snapshot = try await provider.fetchUsage(now: now)
             state = .ready(snapshot)
+            recordPaceSampleAndEvaluate(snapshot: snapshot, at: now)
             await evaluateAndNotifyThresholds(usedPercent: snapshot.usedPercent)
         } catch let error as GrokAuthError {
             state = .unauthenticated(error.localizedDescription)
@@ -272,6 +284,19 @@ final class AppModel {
                 state = .error(error.localizedDescription)
             }
         }
+    }
+
+    // MARK: - Pace estimate
+
+    private func recordPaceSampleAndEvaluate(snapshot: UsageSnapshot, at date: Date) {
+        paceStore.record(from: snapshot, at: date)
+        paceOutcome = UsagePaceEvaluator.evaluate(
+            samples: paceStore.allSamples(),
+            currentUsedPercent: snapshot.usedPercent,
+            periodStart: snapshot.periodStart,
+            resetsAt: snapshot.resetsAt,
+            now: date
+        )
     }
 
     // MARK: - Threshold notifications

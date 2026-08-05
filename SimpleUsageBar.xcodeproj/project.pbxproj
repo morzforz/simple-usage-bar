@@ -39,6 +39,10 @@
 		A10000000000000000000020 /* StatusMeterLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* StatusMeterLayout.swift */; };
 		A10000000000000000000021 /* StatusMeterImageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* StatusMeterImageRenderer.swift */; };
 		A10000000000000000000022 /* StatusMeterLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* StatusMeterLayoutTests.swift */; };
+		A10000000000000000000023 /* UsagePace.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000023 /* UsagePace.swift */; };
+		A10000000000000000000024 /* UsagePaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* UsagePaceStore.swift */; };
+		A10000000000000000000025 /* UsagePaceEvaluatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */; };
+		A10000000000000000000026 /* AppModelPaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* AppModelPaceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,10 @@
 		A20000000000000000000020 /* StatusMeterLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMeterLayout.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* StatusMeterImageRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMeterImageRenderer.swift; sourceTree = "<group>"; };
 		A20000000000000000000022 /* StatusMeterLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMeterLayoutTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000023 /* UsagePace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePace.swift; sourceTree = "<group>"; };
+		A20000000000000000000024 /* UsagePaceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePaceStore.swift; sourceTree = "<group>"; };
+		A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePaceEvaluatorTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000026 /* AppModelPaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelPaceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +149,8 @@
 				A2000000000000000000001C /* UsageThresholdNotifier.swift */,
 				A20000000000000000000020 /* StatusMeterLayout.swift */,
 				A20000000000000000000021 /* StatusMeterImageRenderer.swift */,
+				A20000000000000000000023 /* UsagePace.swift */,
+				A20000000000000000000024 /* UsagePaceStore.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -158,6 +168,8 @@
 				A2000000000000000000001D /* UsageThresholdAlertTests.swift */,
 				A2000000000000000000001E /* AppModelThresholdNotifyTests.swift */,
 				A20000000000000000000022 /* StatusMeterLayoutTests.swift */,
+				A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */,
+				A20000000000000000000026 /* AppModelPaceTests.swift */,
 				A7000000000000000000000A /* Fixtures */,
 			);
 			path = SimpleUsageBarTests;
@@ -346,6 +358,8 @@
 				A1000000000000000000001C /* UsageThresholdNotifier.swift in Sources */,
 				A10000000000000000000020 /* StatusMeterLayout.swift in Sources */,
 				A10000000000000000000021 /* StatusMeterImageRenderer.swift in Sources */,
+				A10000000000000000000023 /* UsagePace.swift in Sources */,
+				A10000000000000000000024 /* UsagePaceStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +377,8 @@
 				A1000000000000000000001D /* UsageThresholdAlertTests.swift in Sources */,
 				A1000000000000000000001E /* AppModelThresholdNotifyTests.swift in Sources */,
 				A10000000000000000000022 /* StatusMeterLayoutTests.swift in Sources */,
+				A10000000000000000000025 /* UsagePaceEvaluatorTests.swift in Sources */,
+				A10000000000000000000026 /* AppModelPaceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

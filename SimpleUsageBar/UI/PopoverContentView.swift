@@ -50,6 +50,12 @@ struct PopoverContentView: View {
                     .accessibilityIdentifier("resetAbsoluteLabel")
             }
 
+            Text(model.paceDisplayLine)
+                .font(.subheadline)
+                .foregroundStyle(paceLineColor)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("paceLabel")
+
             if let email = model.accountEmail {
                 Text(email)
                     .font(.caption)
@@ -115,6 +121,17 @@ struct PopoverContentView: View {
             return .orange
         default:
             return .secondary
+        }
+    }
+
+    private var paceLineColor: Color {
+        switch model.paceOutcome {
+        case .insufficientData:
+            return .secondary
+        case .onPace, .behindPace:
+            return .secondary
+        case .aheadOfPace:
+            return .orange
         }
     }
 }
