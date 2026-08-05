@@ -5,13 +5,9 @@
 import Foundation
 
 public enum UsageDisplayFormatter {
-    /// Menubar status title, e.g. "G 43%".
-    public static func statusItemTitle(
-        for snapshot: UsageSnapshot,
-        providerLetter: String = "G"
-    ) -> String {
-        let percent = formatUsedPercent(snapshot.usedPercent)
-        return "\(providerLetter) \(percent)"
+    /// Menubar percent label only (brand mark is a logo image, not the letter G).
+    public static func statusItemTitle(for snapshot: UsageSnapshot) -> String {
+        formatUsedPercent(snapshot.usedPercent)
     }
 
     /// Whole-number used percent with a trailing % sign.
@@ -19,6 +15,16 @@ public enum UsageDisplayFormatter {
         let clamped = max(0, value)
         let rounded = Int(clamped.rounded())
         return "\(rounded)%"
+    }
+
+    /// Fill fraction for a horizontal usage bar, clamped to 0…1.
+    public static func barFillFraction(usedPercent: Double) -> Double {
+        min(1, max(0, usedPercent / 100))
+    }
+
+    /// Placeholder percent text for non-ready menubar states.
+    public static func statusPlaceholder(for loading: Bool) -> String {
+        loading ? "…" : "—"
     }
 
     /// Absolute local date/time for reset, or a placeholder when missing.

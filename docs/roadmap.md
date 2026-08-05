@@ -9,7 +9,7 @@ Post-MVP directions for Simple Usage Bar. **V1 stays Grok-only and CLI-auth-only
 | Item | Notes |
 |------|--------|
 | README | **Done** (P2) |
-| Threshold notifications | Optional macOS notification at 80% / 100% used |
+| Threshold notifications | **Done** — macOS UserNotifications at 80% / 100% with de-dupe/re-arm |
 
 ---
 
