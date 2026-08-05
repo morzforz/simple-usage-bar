@@ -1,5 +1,5 @@
 // SimpleUsageBarApp.swift
-// Menu-bar accessory: live Grok usage with band tint (P2).
+// Menu-bar accessory: Grok logo + compact percent + mini usage bar.
 
 import SwiftUI
 
@@ -11,11 +11,7 @@ struct SimpleUsageBarApp: App {
         MenuBarExtra {
             PopoverContentView(model: model)
         } label: {
-            Text(model.statusItemTitle)
-                .monospacedDigit()
-                .foregroundStyle(model.usesBandTint ? model.usageBand.color : Color.primary)
-                .opacity(model.isStale ? 0.75 : 1.0)
-                .help(model.tooltipText)
+            MenuBarStatusLabel(model: model)
         }
         .menuBarExtraStyle(.window)
     }

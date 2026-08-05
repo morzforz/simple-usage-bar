@@ -35,6 +35,7 @@
 		A1000000000000000000001C /* UsageThresholdNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001C /* UsageThresholdNotifier.swift */; };
 		A1000000000000000000001D /* UsageThresholdAlertTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001D /* UsageThresholdAlertTests.swift */; };
 		A1000000000000000000001E /* AppModelThresholdNotifyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001E /* AppModelThresholdNotifyTests.swift */; };
+		A1000000000000000000001F /* MenuBarStatusLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000001F /* MenuBarStatusLabel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		A2000000000000000000001C /* UsageThresholdNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageThresholdNotifier.swift; sourceTree = "<group>"; };
 		A2000000000000000000001D /* UsageThresholdAlertTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageThresholdAlertTests.swift; sourceTree = "<group>"; };
 		A2000000000000000000001E /* AppModelThresholdNotifyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelThresholdNotifyTests.swift; sourceTree = "<group>"; };
+		A2000000000000000000001F /* MenuBarStatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarStatusLabel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				A20000000000000000000005 /* PopoverContentView.swift */,
+				A2000000000000000000001F /* MenuBarStatusLabel.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -321,6 +324,7 @@
 				A10000000000000000000003 /* UsageSnapshot.swift in Sources */,
 				A10000000000000000000004 /* UsageDisplayFormatter.swift in Sources */,
 				A10000000000000000000005 /* PopoverContentView.swift in Sources */,
+				A1000000000000000000001F /* MenuBarStatusLabel.swift in Sources */,
 				A1000000000000000000000C /* GrokAuthStore.swift in Sources */,
 				A1000000000000000000000D /* GrokCreditsProtoParser.swift in Sources */,
 				A1000000000000000000000E /* GrokBillingClient.swift in Sources */,

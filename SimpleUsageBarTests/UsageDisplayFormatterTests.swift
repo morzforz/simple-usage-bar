@@ -19,19 +19,33 @@ final class UsageDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(snapshot.fetchedAt, now)
     }
 
-    func testStatusItemTitleUsesMockPercent() {
+    func testStatusItemTitleUsesMockPercentOnly() {
         let snapshot = UsageSnapshot.mock(usedPercent: 43)
         let title = UsageDisplayFormatter.statusItemTitle(for: snapshot)
-        XCTAssertEqual(title, "G 43%")
+        XCTAssertEqual(title, "43%")
+        XCTAssertFalse(title.contains("G"), "brand mark is logo image, not letter G")
     }
 
     func testStatusItemTitleRoundsPercent() {
         let snapshot = UsageSnapshot.mock(usedPercent: 43.6)
-        XCTAssertEqual(UsageDisplayFormatter.statusItemTitle(for: snapshot), "G 44%")
+        XCTAssertEqual(UsageDisplayFormatter.statusItemTitle(for: snapshot), "44%")
     }
 
     func testFormatUsedPercentClampsNegativeToZero() {
         XCTAssertEqual(UsageDisplayFormatter.formatUsedPercent(-5), "0%")
+    }
+
+    func testBarFillFractionClampsAndScales() {
+        XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: 43), 0.43, accuracy: 0.0001)
+        XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: 0), 0, accuracy: 0.0001)
+        XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: 100), 1, accuracy: 0.0001)
+        XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: 150), 1, accuracy: 0.0001)
+        XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: -10), 0, accuracy: 0.0001)
+    }
+
+    func testStatusPlaceholders() {
+        XCTAssertEqual(UsageDisplayFormatter.statusPlaceholder(for: true), "…")
+        XCTAssertEqual(UsageDisplayFormatter.statusPlaceholder(for: false), "—")
     }
 
     func testFormatResetRelativeHoursAndMinutes() {

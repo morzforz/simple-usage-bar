@@ -54,22 +54,32 @@ final class AppModel {
 
     // MARK: - Display helpers
 
+    /// Percent (or placeholder) shown next to the Grok logo in the menu bar.
     var statusItemTitle: String {
         switch state {
         case .loading:
-            return "G …"
+            return UsageDisplayFormatter.statusPlaceholder(for: true)
         case let .ready(snapshot):
             return UsageDisplayFormatter.statusItemTitle(for: snapshot)
         case let .stale(snapshot, _):
             // Keep percent visible; stale is signaled via tint + popover message.
             return UsageDisplayFormatter.statusItemTitle(for: snapshot)
-        case .unauthenticated:
-            return "G —"
         case .error:
-            return "G !"
-        case .teamUnsupported:
-            return "G —"
+            return "!"
+        case .unauthenticated, .teamUnsupported:
+            return UsageDisplayFormatter.statusPlaceholder(for: false)
         }
+    }
+
+    /// 0…1 fill for the mini menubar usage bar (0 when no snapshot).
+    var statusBarFillFraction: Double {
+        guard let snapshot = state.snapshot else { return 0 }
+        return UsageDisplayFormatter.barFillFraction(usedPercent: snapshot.usedPercent)
+    }
+
+    /// Whether the mini bar should be shown under the percent.
+    var showsStatusUsageBar: Bool {
+        state.snapshot != nil
     }
 
     var usageBand: UsageBand {

@@ -1,0 +1,4 @@
+Grok mark from lobehub/lobe-icons static assets (SVG/PNG).
+Official xAI brand zip at data.x.ai returned HTTP 403 from this environment.
+Rendered as monochrome template for menu bar tinting.
+Source SVG: https://github.com/lobehub/lobe-icons (packages/static-svg/icons/grok.svg)
