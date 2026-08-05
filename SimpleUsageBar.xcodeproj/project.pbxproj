@@ -43,6 +43,9 @@
 		A10000000000000000000024 /* UsagePaceStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* UsagePaceStore.swift */; };
 		A10000000000000000000025 /* UsagePaceEvaluatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */; };
 		A10000000000000000000026 /* AppModelPaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* AppModelPaceTests.swift */; };
+		A10000000000000000000027 /* PopoverUsageBarStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* PopoverUsageBarStyle.swift */; };
+		A10000000000000000000028 /* PopoverUsageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* PopoverUsageBar.swift */; };
+		A10000000000000000000029 /* PopoverUsageBarStyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000029 /* PopoverUsageBarStyleTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,6 +98,9 @@
 		A20000000000000000000024 /* UsagePaceStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePaceStore.swift; sourceTree = "<group>"; };
 		A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsagePaceEvaluatorTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000026 /* AppModelPaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelPaceTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000027 /* PopoverUsageBarStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverUsageBarStyle.swift; sourceTree = "<group>"; };
+		A20000000000000000000028 /* PopoverUsageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverUsageBar.swift; sourceTree = "<group>"; };
+		A20000000000000000000029 /* PopoverUsageBarStyleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverUsageBarStyleTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +157,7 @@
 				A20000000000000000000021 /* StatusMeterImageRenderer.swift */,
 				A20000000000000000000023 /* UsagePace.swift */,
 				A20000000000000000000024 /* UsagePaceStore.swift */,
+				A20000000000000000000027 /* PopoverUsageBarStyle.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -170,6 +177,7 @@
 				A20000000000000000000022 /* StatusMeterLayoutTests.swift */,
 				A20000000000000000000025 /* UsagePaceEvaluatorTests.swift */,
 				A20000000000000000000026 /* AppModelPaceTests.swift */,
+				A20000000000000000000029 /* PopoverUsageBarStyleTests.swift */,
 				A7000000000000000000000A /* Fixtures */,
 			);
 			path = SimpleUsageBarTests;
@@ -208,6 +216,7 @@
 			children = (
 				A20000000000000000000005 /* PopoverContentView.swift */,
 				A2000000000000000000001F /* MenuBarStatusLabel.swift */,
+				A20000000000000000000028 /* PopoverUsageBar.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -360,6 +369,8 @@
 				A10000000000000000000021 /* StatusMeterImageRenderer.swift in Sources */,
 				A10000000000000000000023 /* UsagePace.swift in Sources */,
 				A10000000000000000000024 /* UsagePaceStore.swift in Sources */,
+				A10000000000000000000027 /* PopoverUsageBarStyle.swift in Sources */,
+				A10000000000000000000028 /* PopoverUsageBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -379,6 +390,7 @@
 				A10000000000000000000022 /* StatusMeterLayoutTests.swift in Sources */,
 				A10000000000000000000025 /* UsagePaceEvaluatorTests.swift in Sources */,
 				A10000000000000000000026 /* AppModelPaceTests.swift in Sources */,
+				A10000000000000000000029 /* PopoverUsageBarStyleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
