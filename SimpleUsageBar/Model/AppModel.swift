@@ -83,27 +83,13 @@ final class AppModel {
         state.snapshot != nil
     }
 
-    /// Composited status image for MenuBarExtra (logo + percent + optional bar).
-    /// Rebuilt whenever observed state changes so SwiftUI refreshes the label.
+    /// Composited **template** status image for MenuBarExtra (logo + percent + optional bar).
+    /// Monochrome only — system tints black/white against the menu bar (no band colors).
     var statusMeterImage: NSImage {
-        let tint: NSColor
-        if usesBandTint {
-            switch usageBand {
-            case .normal:
-                tint = NSColor.systemGreen
-            case .elevated:
-                tint = NSColor.systemYellow
-            case .high:
-                tint = NSColor.systemRed
-            }
-        } else {
-            tint = NSColor.labelColor
-        }
         let used: Double? = showsStatusUsageBar ? state.snapshot?.usedPercent : nil
         return StatusMeterImageRenderer.makeImage(
             percentText: statusItemTitle,
-            usedPercent: used,
-            tint: tint
+            usedPercent: used
         )
     }
 
@@ -111,7 +97,7 @@ final class AppModel {
         UsageDisplayFormatter.usageBand(for: state.snapshot)
     }
 
-    /// Whether menubar should use band tint (ready/stale with data).
+    /// Whether the popover should use usage-band colors (menubar is monochrome template).
     var usesBandTint: Bool {
         state.snapshot != nil
     }

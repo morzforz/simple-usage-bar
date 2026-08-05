@@ -1,6 +1,7 @@
 // StatusMeterLayoutTests.swift
 // Pure geometry for composited menubar meter (CodexBar-style single image).
 
+import AppKit
 import XCTest
 @testable import SimpleUsageBar
 
@@ -50,7 +51,6 @@ final class StatusMeterLayoutTests: XCTestCase {
         let image = StatusMeterImageRenderer.makeImage(
             percentText: "43%",
             usedPercent: 43,
-            tint: .labelColor,
             logo: nil
         )
         XCTAssertGreaterThan(image.size.width, 0)
@@ -63,10 +63,28 @@ final class StatusMeterLayoutTests: XCTestCase {
         let image = StatusMeterImageRenderer.makeImage(
             percentText: "…",
             usedPercent: nil,
-            tint: .labelColor,
             logo: nil
         )
         XCTAssertEqual(image.size.height, StatusMeterLayout.canvasHeight, accuracy: 0.01)
         XCTAssertGreaterThan(image.size.width, 0)
+    }
+
+    func testStatusImageIsTemplateMonochrome() {
+        let image = StatusMeterImageRenderer.makeImage(
+            percentText: "43%",
+            usedPercent: 43,
+            logo: nil
+        )
+        XCTAssertTrue(image.isTemplate, "status image must be template for system black/white adaptation")
+        XCTAssertEqual(StatusMeterImageRenderer.templateInk, NSColor.black)
+    }
+
+    func testStatusImageStaysTemplateWithoutBar() {
+        let image = StatusMeterImageRenderer.makeImage(
+            percentText: "—",
+            usedPercent: nil,
+            logo: nil
+        )
+        XCTAssertTrue(image.isTemplate)
     }
 }

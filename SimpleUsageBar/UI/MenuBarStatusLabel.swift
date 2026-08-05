@@ -1,9 +1,8 @@
 // MenuBarStatusLabel.swift
-// MenuBarExtra label: single composited NSImage (logo + percent + bar under percent).
+// MenuBarExtra label: single composited template NSImage (logo + percent + bar).
 //
-// Open-source practice (e.g. CodexBar): draw the status chrome into an 18pt-tall
-// NSImage and display that image — multi-line SwiftUI labels are clipped by the
-// system menu bar height (~22pt working area).
+// Image is monochrome template so the system renders black or white against the
+// menu bar. Band colors apply in the popover only, not the status item.
 
 import AppKit
 import SwiftUI
@@ -13,8 +12,10 @@ struct MenuBarStatusLabel: View {
 
     var body: some View {
         Image(nsImage: model.statusMeterImage)
+            .renderingMode(.template)
             .interpolation(.none)
             .antialiased(false)
+            .opacity(model.isStale ? 0.75 : 1.0)
             .help(model.tooltipText)
             .accessibilityLabel(accessibilitySummary)
     }
