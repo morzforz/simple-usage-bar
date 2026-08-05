@@ -21,6 +21,13 @@ final class PopoverUsageBarStyleTests: XCTestCase {
         XCTAssertGreaterThan(c.green, c.blue)
     }
 
+    func testHeadroomOpacityIsFaintButVisible() {
+        // Fainter than solid used fill; still above track-level invisibility.
+        XCTAssertEqual(PopoverUsageBarStyle.headroomOpacity, 0.58, accuracy: 0.001)
+        XCTAssertGreaterThan(PopoverUsageBarStyle.headroomOpacity, 0.3)
+        XCTAssertLessThan(PopoverUsageBarStyle.headroomOpacity, 1.0)
+    }
+
     func testHeadroomColorMatchesSRGBToken() {
         // Color view token must stay in lockstep with testable sRGB components.
         let c = PopoverUsageBarStyle.headroomColorSRGB
