@@ -12,12 +12,13 @@ public enum PopoverUsageBarStyle {
 
     /// Yellow-orange fill for the headroom intermediate segment (popover only).
     public static var headroomColor: Color {
-        // Warm yellow-orange, slightly dimmed; distinct from band yellow and green/red fills.
+        // Warm yellow-orange, faintly over the track so used fill stays primary.
         Color(
             red: headroomColorSRGB.red,
             green: headroomColorSRGB.green,
             blue: headroomColorSRGB.blue
         )
+        .opacity(headroomOpacity)
     }
 
     /// Unfilled track behind the segments.
@@ -25,8 +26,11 @@ public enum PopoverUsageBarStyle {
         Color.secondary.opacity(0.22)
     }
 
+    /// Opacity applied to headroom fill (fainter than solid used segment).
+    public static let headroomOpacity: Double = 0.58
+
     /// sRGB components of `headroomColor` for unit tests (no Color equality reliance).
-    /// Dimmer than full-bright orange so the used fill still reads as primary.
+    /// Dimmer base + opacity so the used fill still reads as primary.
     public static let headroomColorSRGB: (red: Double, green: Double, blue: Double) = (0.82, 0.48, 0.12)
 
     /// Whether the popover should draw the yellow-orange intermediate (same rule as menubar).
