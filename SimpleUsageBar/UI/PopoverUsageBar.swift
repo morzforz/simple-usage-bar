@@ -40,9 +40,20 @@ struct PopoverUsageBar: View {
             .frame(width: trackW, height: geo.size.height, alignment: .leading)
         }
         .frame(height: 8)
+        .contentShape(Capsule())
+        .help(tooltipText)
         .accessibilityElement(children: .ignore)
         .accessibilityIdentifier("usageProgress")
         .accessibilityLabel(accessibilitySummary)
+        .accessibilityHint(tooltipText)
+    }
+
+    /// Shipped pure builder — same string as mouseover `.help`.
+    private var tooltipText: String {
+        PopoverUsageBarStyle.tooltipText(
+            usedPercent: usedPercent,
+            headroomPercent: headroomPercent
+        )
     }
 
     private var accessibilitySummary: String {
