@@ -55,8 +55,8 @@ When usage first reaches **80%** or **100%**, the app can show a macOS notificat
 
 ## What you see
 
-- Menu bar: Grok logo + compact percent (e.g. `43%`) and a mini usage bar, tinted by usage band  
-  - green &lt; 70% · yellow 70–90% · red ≥ 90%
+- Menu bar: Grok logo + compact percent (e.g. `43%`) and a mini usage bar as a **system template** (black/white adaptive)  
+  - Popover still uses green / yellow / red bands (&lt;70 / 70–90 / ≥90)
 - Popover: percent bar, reset time, account email, status messages, **Refresh**, **Launch at Login**, **Quit**
 
 ## Unofficial billing API (best-effort)
