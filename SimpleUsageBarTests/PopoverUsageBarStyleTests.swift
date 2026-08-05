@@ -12,9 +12,11 @@ final class PopoverUsageBarStyleTests: XCTestCase {
     func testHeadroomColorSRGBIsYellowOrange() {
         let c = PopoverUsageBarStyle.headroomColorSRGB
         // Yellow-orange: high red, mid green, low blue — not pure yellow and not monochrome gray.
-        XCTAssertEqual(c.red, 1.0, accuracy: 0.001)
-        XCTAssertEqual(c.green, 0.55, accuracy: 0.001)
+        // Dimmer than full-bright (red < 1.0) so used fill stays primary.
+        XCTAssertEqual(c.red, 0.82, accuracy: 0.001)
+        XCTAssertEqual(c.green, 0.48, accuracy: 0.001)
         XCTAssertEqual(c.blue, 0.12, accuracy: 0.001)
+        XCTAssertLessThan(c.red, 1.0)
         XCTAssertGreaterThan(c.red, c.green)
         XCTAssertGreaterThan(c.green, c.blue)
     }
@@ -22,7 +24,7 @@ final class PopoverUsageBarStyleTests: XCTestCase {
     func testHeadroomColorMatchesSRGBToken() {
         // Color view token must stay in lockstep with testable sRGB components.
         let c = PopoverUsageBarStyle.headroomColorSRGB
-        XCTAssertEqual(c.red, 1.0, accuracy: 0.001)
+        XCTAssertEqual(c.red, 0.82, accuracy: 0.001)
         // Used-fill band yellow (.yellow) is not our headroom token name.
         XCTAssertNotEqual(PopoverUsageBarStyle.headroomStyleName, UsageBand.elevated.styleName)
         XCTAssertNotEqual(PopoverUsageBarStyle.headroomStyleName, UsageBand.normal.styleName)
