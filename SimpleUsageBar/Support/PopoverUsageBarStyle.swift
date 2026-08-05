@@ -56,4 +56,26 @@ public enum PopoverUsageBarStyle {
             trackWidth: trackWidth
         )
     }
+
+    /// Mouseover help for the popover usage bar.
+    ///
+    /// - When headroom is missing or not strictly greater than used: usage-only copy.
+    /// - When headroom segment is shown: explains used fill + yellow-orange headroom with both percents.
+    public static func tooltipText(
+        usedPercent: Double,
+        headroomPercent: Double?
+    ) -> String {
+        let usedLabel = UsageDisplayFormatter.formatUsedPercent(usedPercent)
+        let usedLine = "Used (colored fill): \(usedLabel) of your period pool."
+
+        guard showsHeadroomSegment(usedPercent: usedPercent, headroomPercent: headroomPercent),
+              let headroomPercent else {
+            return usedLine
+        }
+
+        let headroomLabel = UsageDisplayFormatter.formatUsedPercent(headroomPercent)
+        let headroomLine =
+            "Headroom (yellow-orange): ~\(headroomLabel) projected unused at reset if average burn continues."
+        return "\(usedLine)\n\(headroomLine)"
+    }
 }

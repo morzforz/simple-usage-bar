@@ -77,4 +77,37 @@ final class PopoverUsageBarStyleTests: XCTestCase {
         XCTAssertFalse(low.showsIntermediate)
         XCTAssertEqual(low.intermediateWidth, 0, accuracy: 0.001)
     }
+
+    func testTooltipUsageOnlyWhenHeadroomNil() {
+        let text = PopoverUsageBarStyle.tooltipText(usedPercent: 43, headroomPercent: nil)
+        XCTAssertTrue(text.lowercased().contains("used"))
+        XCTAssertTrue(text.contains("43%"))
+        XCTAssertFalse(text.lowercased().contains("headroom"))
+        XCTAssertFalse(text.lowercased().contains("yellow-orange"))
+    }
+
+    func testTooltipUsageOnlyWhenUsedExceedsOrEqualsHeadroom() {
+        let exceeds = PopoverUsageBarStyle.tooltipText(usedPercent: 70, headroomPercent: 0)
+        XCTAssertTrue(exceeds.contains("70%"))
+        XCTAssertFalse(exceeds.lowercased().contains("headroom"))
+        XCTAssertFalse(exceeds.lowercased().contains("yellow-orange"))
+
+        let equal = PopoverUsageBarStyle.tooltipText(usedPercent: 50, headroomPercent: 50)
+        XCTAssertTrue(equal.contains("50%"))
+        XCTAssertFalse(equal.lowercased().contains("headroom"))
+    }
+
+    func testTooltipIncludesHeadroomWhenSegmentShown() {
+        let text = PopoverUsageBarStyle.tooltipText(usedPercent: 20, headroomPercent: 60)
+        // Used + headroom colors and percents.
+        XCTAssertTrue(text.lowercased().contains("used"))
+        XCTAssertTrue(text.contains("20%"))
+        XCTAssertTrue(text.lowercased().contains("headroom"))
+        XCTAssertTrue(text.lowercased().contains("yellow-orange"))
+        XCTAssertTrue(text.contains("60%"))
+        // Multi-line when both segments apply.
+        XCTAssertTrue(text.contains("\n"))
+        // Same gate as visible intermediate band.
+        XCTAssertTrue(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 20, headroomPercent: 60))
+    }
 }
