@@ -49,6 +49,10 @@ xcodebuild -scheme SimpleUsageBar -configuration Debug \
   -project SimpleUsageBar.xcodeproj test
 ```
 
+## Notifications
+
+When usage first reaches **80%** or **100%**, the app can show a macOS notification (you will be asked for permission once). It will not re-notify for the same threshold until usage drops back below that level.
+
 ## What you see
 
 - Menu bar: `G 43%` (example), tinted by usage band  

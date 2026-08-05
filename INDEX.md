@@ -19,6 +19,6 @@ Single source of truth for major project documents. Agents and humans should con
 
 ## Status
 
-- **Phase:** P2 polish shipped; near-term roadmap is optional notifications (and medium-term packaging/providers). Secondary buckets + agent-stdio billing are tabled.
+- **Phase:** P2 polish shipped; threshold notifications shipped; medium-term roadmap is packaging/providers. Secondary buckets + agent-stdio billing are tabled.
 - **V1 scope:** macOS menubar app; Grok Code only; CLI auth only.
 - **App sources:** `SimpleUsageBar/` + `SimpleUsageBar.xcodeproj` + `SimpleUsageBarTests/`
