@@ -110,4 +110,18 @@ final class PopoverUsageBarStyleTests: XCTestCase {
         // Same gate as visible intermediate band.
         XCTAssertTrue(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 20, headroomPercent: 60))
     }
+
+    func testHoverCalloutPresentationIsEnabledForMenuBarExtra() {
+        // Documented fix: `.help` is unreliable in MenuBarExtra windows; ship hover callout.
+        XCTAssertTrue(PopoverUsageBarStyle.presentsTooltipAsHoverCallout)
+        XCTAssertEqual(
+            PopoverUsageBarStyle.hoverCalloutAccessibilityID,
+            "usageProgressTooltip"
+        )
+        // Callout content is still the pure tooltip builder (not a separate wording path).
+        let text = PopoverUsageBarStyle.tooltipText(usedPercent: 15, headroomPercent: 55)
+        XCTAssertFalse(text.isEmpty)
+        XCTAssertTrue(text.contains("15%"))
+        XCTAssertTrue(text.contains("55%"))
+    }
 }
