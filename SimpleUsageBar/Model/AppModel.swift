@@ -1,6 +1,7 @@
 // AppModel.swift
 // Observable app state: fetch-on-launch, timer, auth watch, manual refresh.
 
+import AppKit
 import Foundation
 import Observation
 
@@ -80,6 +81,30 @@ final class AppModel {
     /// Whether the mini bar should be shown under the percent.
     var showsStatusUsageBar: Bool {
         state.snapshot != nil
+    }
+
+    /// Composited status image for MenuBarExtra (logo + percent + optional bar).
+    /// Rebuilt whenever observed state changes so SwiftUI refreshes the label.
+    var statusMeterImage: NSImage {
+        let tint: NSColor
+        if usesBandTint {
+            switch usageBand {
+            case .normal:
+                tint = NSColor.systemGreen
+            case .elevated:
+                tint = NSColor.systemYellow
+            case .high:
+                tint = NSColor.systemRed
+            }
+        } else {
+            tint = NSColor.labelColor
+        }
+        let used: Double? = showsStatusUsageBar ? state.snapshot?.usedPercent : nil
+        return StatusMeterImageRenderer.makeImage(
+            percentText: statusItemTitle,
+            usedPercent: used,
+            tint: tint
+        )
     }
 
     var usageBand: UsageBand {
