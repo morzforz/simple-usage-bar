@@ -15,6 +15,8 @@ final class AppModel {
     private(set) var launchAtLoginMessage: String?
     /// Directional pace for the current billing window (or insufficient data).
     private(set) var paceOutcome: UsagePaceOutcome = .insufficientData
+    /// Projected unused pool % at reset if average burn continues; nil when insufficient.
+    private(set) var paceHeadroomPercent: Double?
 
     private let provider: any UsageProviding
     private let authStore: GrokAuthStore
@@ -51,9 +53,16 @@ final class AppModel {
         }
     }
 
-    /// User-facing pace line for the popover.
+    /// User-facing pace summary line for the popover.
     var paceDisplayLine: String {
         paceOutcome.displayLine
+    }
+
+    /// Optional headroom line (projected unused % at reset); nil when insufficient data.
+    var paceHeadroomDisplayLine: String? {
+        guard let paceHeadroomPercent else { return nil }
+        let rounded = Int(paceHeadroomPercent.rounded())
+        return "Headroom: ~\(rounded)% unused at reset"
     }
 
     func stop() {
@@ -290,13 +299,15 @@ final class AppModel {
 
     private func recordPaceSampleAndEvaluate(snapshot: UsageSnapshot, at date: Date) {
         paceStore.record(from: snapshot, at: date)
-        paceOutcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: paceStore.allSamples(),
             currentUsedPercent: snapshot.usedPercent,
             periodStart: snapshot.periodStart,
             resetsAt: snapshot.resetsAt,
             now: date
         )
+        paceOutcome = estimate.outcome
+        paceHeadroomPercent = estimate.headroomPercent
     }
 
     // MARK: - Threshold notifications
