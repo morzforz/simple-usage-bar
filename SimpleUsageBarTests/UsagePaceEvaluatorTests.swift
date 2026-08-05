@@ -11,47 +11,51 @@ final class UsagePaceEvaluatorTests: XCTestCase {
     }
 
     func testMissingPeriodBoundsIsInsufficient() {
-        let outcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: [],
             currentUsedPercent: 50,
             periodStart: nil,
             resetsAt: periodEnd,
             now: periodStart.addingTimeInterval(3 * 24 * 3600)
         )
-        XCTAssertEqual(outcome, .insufficientData)
-        XCTAssertTrue(outcome.displayLine.lowercased().contains("not enough"))
+        XCTAssertEqual(estimate.outcome, .insufficientData)
+        XCTAssertNil(estimate.headroomPercent, "insufficient must not invent headroom")
+        XCTAssertNil(estimate.headroomDisplayLine)
+        XCTAssertTrue(estimate.displayLine.lowercased().contains("not enough"))
     }
 
     func testEarlyWindowIsInsufficient() {
         // 1% of week elapsed, even with high used % — gate on elapsed fraction.
         let now = periodStart.addingTimeInterval(0.01 * 7 * 24 * 3600)
-        let outcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: [UsagePaceSample(usedPercent: 10, recordedAt: now, periodStart: periodStart, resetsAt: periodEnd)],
             currentUsedPercent: 10,
             periodStart: periodStart,
             resetsAt: periodEnd,
             now: now
         )
-        XCTAssertEqual(outcome, .insufficientData)
+        XCTAssertEqual(estimate.outcome, .insufficientData)
+        XCTAssertNil(estimate.headroomPercent)
     }
 
     func testLowUsedPercentIsInsufficient() {
         // Mid-window but only 1% used.
         let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
-        let outcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: [],
             currentUsedPercent: 1,
             periodStart: periodStart,
             resetsAt: periodEnd,
             now: now
         )
-        XCTAssertEqual(outcome, .insufficientData)
+        XCTAssertEqual(estimate.outcome, .insufficientData)
+        XCTAssertNil(estimate.headroomPercent)
     }
 
     func testOnPaceWhenNearEvenBurn() {
         // Halfway through week, ~50% used → on pace (within 5pt band).
         let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
-        let outcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: [
                 UsagePaceSample(usedPercent: 48, recordedAt: now, periodStart: periodStart, resetsAt: periodEnd),
             ],
@@ -60,27 +64,86 @@ final class UsagePaceEvaluatorTests: XCTestCase {
             resetsAt: periodEnd,
             now: now
         )
-        XCTAssertEqual(outcome, .onPace)
-        XCTAssertTrue(outcome.displayLine.lowercased().contains("on track"))
+        XCTAssertEqual(estimate.outcome, .onPace)
+        XCTAssertTrue(estimate.displayLine.lowercased().contains("on track"))
+        // Even burn → project to ~100% used → headroom ~0.
+        XCTAssertNotNil(estimate.headroomPercent)
+        XCTAssertEqual(estimate.headroomPercent!, 0, accuracy: 0.5)
     }
 
     func testAheadOfPaceWhenBurningFasterThanEven() {
-        // Halfway through week but 70% used → ahead.
+        // Halfway through week but 70% used → ahead; projects past 100% → headroom 0.
         let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
-        let outcome = UsagePaceEvaluator.evaluate(
+        let estimate = UsagePaceEvaluator.estimate(
             samples: [],
             currentUsedPercent: 70,
             periodStart: periodStart,
             resetsAt: periodEnd,
             now: now
         )
-        XCTAssertEqual(outcome, .aheadOfPace)
-        XCTAssertTrue(outcome.displayLine.lowercased().contains("ahead"))
+        XCTAssertEqual(estimate.outcome, .aheadOfPace)
+        XCTAssertTrue(estimate.displayLine.lowercased().contains("ahead"))
+        XCTAssertNotNil(estimate.headroomPercent)
+        XCTAssertEqual(estimate.headroomPercent!, 0, accuracy: 0.01)
+        XCTAssertNotNil(estimate.headroomDisplayLine)
+        XCTAssertTrue(estimate.headroomDisplayLine!.lowercased().contains("headroom"))
     }
 
     func testBehindPaceWhenBurningSlowerThanEven() {
         // Halfway through week but only 20% used → behind even burn.
+        // Projected used at reset = 20 * (1/0.5) = 40 → headroom 60.
         let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
+        let estimate = UsagePaceEvaluator.estimate(
+            samples: [],
+            currentUsedPercent: 20,
+            periodStart: periodStart,
+            resetsAt: periodEnd,
+            now: now
+        )
+        XCTAssertEqual(estimate.outcome, .behindPace)
+        XCTAssertTrue(estimate.displayLine.lowercased().contains("under"))
+        guard let headroom = estimate.headroomPercent else {
+            return XCTFail("behind-pace estimate must include headroom")
+        }
+        XCTAssertEqual(headroom, 60, accuracy: 0.5)
+        XCTAssertEqual(estimate.headroomDisplayLine, "Headroom: ~60% unused at reset")
+    }
+
+    func testHeadroomClampsWhenProjectionExceedsPool() {
+        // Mid-window, 80% used → projected 160% → headroom 0 (not negative).
+        let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
+        let estimate = UsagePaceEvaluator.estimate(
+            samples: [],
+            currentUsedPercent: 80,
+            periodStart: periodStart,
+            resetsAt: periodEnd,
+            now: now
+        )
+        XCTAssertEqual(estimate.outcome, .aheadOfPace)
+        XCTAssertEqual(estimate.headroomPercent!, 0, accuracy: 0.01)
+    }
+
+    func testInvalidWindowIsInsufficient() {
+        let estimate = UsagePaceEvaluator.estimate(
+            samples: [],
+            currentUsedPercent: 50,
+            periodStart: periodEnd,
+            resetsAt: periodStart,
+            now: periodStart.addingTimeInterval(1000)
+        )
+        XCTAssertEqual(estimate.outcome, .insufficientData)
+        XCTAssertNil(estimate.headroomPercent)
+    }
+
+    func testEvaluateMatchesEstimateOutcome() {
+        let now = periodStart.addingTimeInterval(0.5 * 7 * 24 * 3600)
+        let estimate = UsagePaceEvaluator.estimate(
+            samples: [],
+            currentUsedPercent: 20,
+            periodStart: periodStart,
+            resetsAt: periodEnd,
+            now: now
+        )
         let outcome = UsagePaceEvaluator.evaluate(
             samples: [],
             currentUsedPercent: 20,
@@ -88,19 +151,7 @@ final class UsagePaceEvaluatorTests: XCTestCase {
             resetsAt: periodEnd,
             now: now
         )
-        XCTAssertEqual(outcome, .behindPace)
-        XCTAssertTrue(outcome.displayLine.lowercased().contains("under"))
-    }
-
-    func testInvalidWindowIsInsufficient() {
-        let outcome = UsagePaceEvaluator.evaluate(
-            samples: [],
-            currentUsedPercent: 50,
-            periodStart: periodEnd,
-            resetsAt: periodStart,
-            now: periodStart.addingTimeInterval(1000)
-        )
-        XCTAssertEqual(outcome, .insufficientData)
+        XCTAssertEqual(outcome, estimate.outcome)
     }
 
     func testStoreRecordsAndPrunesOtherPeriods() {

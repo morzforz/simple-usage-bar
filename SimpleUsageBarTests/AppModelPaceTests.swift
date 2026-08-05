@@ -66,6 +66,51 @@ final class AppModelPaceTests: XCTestCase {
         XCTAssertFalse(model.paceDisplayLine.isEmpty)
         XCTAssertTrue(model.paceDisplayLine.hasPrefix("Pace:"))
         XCTAssertTrue(model.paceDisplayLine.lowercased().contains("ahead"))
+        // Ahead at mid-window 70% → projected over 100% → headroom 0, but still shown.
+        XCTAssertNotNil(model.paceHeadroomPercent)
+        XCTAssertEqual(model.paceHeadroomPercent!, 0, accuracy: 0.5)
+        XCTAssertNotNil(model.paceHeadroomDisplayLine)
+        XCTAssertTrue(model.paceHeadroomDisplayLine!.lowercased().contains("headroom"))
+    }
+
+    func testSuccessfulRefreshBehindPaceSurfacesPositiveHeadroom() async {
+        let now = Date()
+        let periodStart = now.addingTimeInterval(-0.5 * 7 * 24 * 3600)
+        let periodEnd = periodStart.addingTimeInterval(7 * 24 * 3600)
+        // Mid-window, 20% used → behind; headroom ~60%.
+        let snapshot = UsageSnapshot(
+            providerId: "grok",
+            displayName: "Grok",
+            usedPercent: 20,
+            resetsAt: periodEnd,
+            periodStart: periodStart,
+            windowLabel: .weekly,
+            fetchedAt: now,
+            source: .billingApi
+        )
+        let paceURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("pace-model-hr-\(UUID().uuidString).json")
+        defer { try? FileManager.default.removeItem(at: paceURL) }
+
+        let model = AppModel(
+            provider: FixedSnapshotProvider(snapshot: snapshot),
+            thresholdNotifier: RecordingThresholdNotifier(),
+            paceStore: UsagePaceStore(fileURL: paceURL),
+            refreshInterval: 3600,
+            minimumRefreshInterval: 0,
+            autoStart: false
+        )
+        defer { model.stop() }
+
+        await model.refresh(force: true)
+
+        XCTAssertEqual(model.paceOutcome, .behindPace)
+        XCTAssertTrue(model.paceDisplayLine.lowercased().contains("under"))
+        guard let headroom = model.paceHeadroomPercent else {
+            return XCTFail("refresh must set headroom when data is sufficient")
+        }
+        XCTAssertEqual(headroom, 60, accuracy: 1.0)
+        XCTAssertEqual(model.paceHeadroomDisplayLine, "Headroom: ~60% unused at reset")
     }
 
     func testInsufficientWhenNoPeriodBounds() async {
@@ -96,5 +141,7 @@ final class AppModelPaceTests: XCTestCase {
         await model.refresh(force: true)
         XCTAssertEqual(model.paceOutcome, .insufficientData)
         XCTAssertTrue(model.paceDisplayLine.lowercased().contains("not enough"))
+        XCTAssertNil(model.paceHeadroomPercent, "must not invent headroom when insufficient")
+        XCTAssertNil(model.paceHeadroomDisplayLine)
     }
 }

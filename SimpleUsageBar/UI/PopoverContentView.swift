@@ -56,6 +56,14 @@ struct PopoverContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("paceLabel")
 
+            if let headroomLine = model.paceHeadroomDisplayLine {
+                Text(headroomLine)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("paceHeadroomLabel")
+            }
+
             if let email = model.accountEmail {
                 Text(email)
                     .font(.caption)
