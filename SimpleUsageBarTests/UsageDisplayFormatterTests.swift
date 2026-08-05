@@ -43,6 +43,24 @@ final class UsageDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(UsageDisplayFormatter.barFillFraction(usedPercent: -10), 0, accuracy: 0.0001)
     }
 
+    func testBarFillWidthUsesFractionAndClamps() {
+        XCTAssertEqual(
+            UsageDisplayFormatter.barFillWidth(usedPercent: 43, totalWidth: 30),
+            12.9,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            UsageDisplayFormatter.barFillWidth(usedPercent: 150, totalWidth: 30),
+            30,
+            accuracy: 0.0001
+        )
+        XCTAssertEqual(
+            UsageDisplayFormatter.barFillWidth(usedPercent: -5, totalWidth: 30),
+            0,
+            accuracy: 0.0001
+        )
+    }
+
     func testStatusPlaceholders() {
         XCTAssertEqual(UsageDisplayFormatter.statusPlaceholder(for: true), "…")
         XCTAssertEqual(UsageDisplayFormatter.statusPlaceholder(for: false), "—")
