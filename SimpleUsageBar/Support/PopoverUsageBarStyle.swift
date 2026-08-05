@@ -78,4 +78,13 @@ public enum PopoverUsageBarStyle {
             "Headroom (yellow-orange): ~\(headroomLabel) projected unused at reset if average burn continues."
         return "\(usedLine)\n\(headroomLine)"
     }
+
+    /// Presentation strategy for bar explanation on hover.
+    ///
+    /// SwiftUI `.help` is unreliable inside MenuBarExtra `.window` popovers; the shipped bar
+    /// uses an in-popover hover callout (and optionally AppKit `toolTip`).
+    public static let presentsTooltipAsHoverCallout = true
+
+    /// Accessibility / test identifier for the visible hover callout.
+    public static let hoverCalloutAccessibilityID = "usageProgressTooltip"
 }
