@@ -8,6 +8,8 @@
 // - Draw into a fixed ~18pt-tall bitmap
 // - isTemplate = true for system adaptive monochrome
 // - Do NOT rely on multi-line SwiftUI MenuBarExtra labels (system clips them)
+//
+// Bar tones (alpha of black, light → dark): track < headroom intermediate < fill.
 
 import AppKit
 import Foundation
@@ -16,14 +18,23 @@ enum StatusMeterImageRenderer {
     /// Solid black used for template-image silhouettes (system recolors).
     static let templateInk = NSColor.black
 
+    /// Unfilled track alpha (lightest band).
+    static let trackAlpha: CGFloat = 0.28
+    /// Intermediate headroom band — between track and fill.
+    static let intermediateAlpha: CGFloat = 0.55
+    /// Used fill alpha (darkest band).
+    static let fillAlpha: CGFloat = 0.95
+
     /// Build a status-item **template** image for the current usage presentation.
     /// - Parameters:
     ///   - percentText: e.g. "43%", "…", "—", "!"
     ///   - usedPercent: when non-nil, draws the bar under the percent (fill from helpers)
+    ///   - headroomPercent: optional projected unused-at-reset %; intermediate band when > used
     ///   - logo: optional Grok logo (re-tinted to black for the template)
     static func makeImage(
         percentText: String,
         usedPercent: Double?,
+        headroomPercent: Double? = nil,
         logo: NSImage? = NSImage(named: "GrokLogo")
     ) -> NSImage {
         let showsBar = usedPercent != nil
@@ -82,20 +93,38 @@ enum StatusMeterImageRenderer {
                 let track = NSRect(x: barX, y: barY, width: barW, height: barH)
                 let radius = barH / 2
 
-                // Track (lighter black via alpha — template-safe monochrome).
+                // Track (lightest — template-safe monochrome).
                 let trackPath = NSBezierPath(roundedRect: track, xRadius: radius, yRadius: radius)
-                ink.withAlphaComponent(0.28).setFill()
+                ink.withAlphaComponent(trackAlpha).setFill()
                 trackPath.fill()
 
-                // Fill left → right, clipped to capsule.
-                let fillW = StatusMeterLayout.barFillWidth(usedPercent: used)
-                if fillW > 0.5 {
-                    ctx.saveGState()
-                    trackPath.addClip()
-                    ink.withAlphaComponent(0.95).setFill()
-                    NSBezierPath(rect: NSRect(x: barX, y: barY, width: fillW, height: barH)).fill()
-                    ctx.restoreGState()
+                let bands = StatusMeterLayout.barBands(
+                    usedPercent: used,
+                    headroomPercent: headroomPercent,
+                    trackWidth: barW
+                )
+
+                // Intermediate headroom (between track and fill), then used fill on top.
+                ctx.saveGState()
+                trackPath.addClip()
+                if bands.showsIntermediate, bands.intermediateWidth > 0.5 {
+                    ink.withAlphaComponent(intermediateAlpha).setFill()
+                    NSBezierPath(
+                        rect: NSRect(
+                            x: barX + bands.fillWidth,
+                            y: barY,
+                            width: bands.intermediateWidth,
+                            height: barH
+                        )
+                    ).fill()
                 }
+                if bands.fillWidth > 0.5 {
+                    ink.withAlphaComponent(fillAlpha).setFill()
+                    NSBezierPath(
+                        rect: NSRect(x: barX, y: barY, width: bands.fillWidth, height: barH)
+                    ).fill()
+                }
+                ctx.restoreGState()
             } else {
                 let textY = (height - textSize.height) / 2
                 let textX = columnX

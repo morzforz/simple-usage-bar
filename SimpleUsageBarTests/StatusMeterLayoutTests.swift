@@ -23,6 +23,67 @@ final class StatusMeterLayoutTests: XCTestCase {
         XCTAssertEqual(StatusMeterLayout.barFillWidth(usedPercent: -10), 0, accuracy: 0.0001)
     }
 
+    func testShowsHeadroomIntermediateOnlyWhenHeadroomExceedsUsed() {
+        XCTAssertTrue(StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 20, headroomPercent: 60))
+        XCTAssertFalse(StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 70, headroomPercent: 0))
+        XCTAssertFalse(StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 50, headroomPercent: 50))
+        XCTAssertFalse(StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 40, headroomPercent: nil))
+        XCTAssertFalse(StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 10, headroomPercent: 5))
+    }
+
+    func testBarBandsIntermediateWhenHeadroomAboveUsed() {
+        // used 20%, headroom 60% → fill 0.2×28, intermediate (0.6−0.2)×28
+        let bands = StatusMeterLayout.barBands(usedPercent: 20, headroomPercent: 60)
+        XCTAssertTrue(bands.showsIntermediate)
+        XCTAssertEqual(bands.fillWidth, 28 * 0.20, accuracy: 0.0001)
+        XCTAssertEqual(bands.intermediateWidth, 28 * 0.40, accuracy: 0.0001)
+        // Intermediate ends at headroom mark: fill + intermediate = headroom fraction of track.
+        XCTAssertEqual(bands.fillWidth + bands.intermediateWidth, 28 * 0.60, accuracy: 0.0001)
+    }
+
+    func testBarBandsOmitsIntermediateWhenHeadroomNilOrNotGreater() {
+        let noHeadroom = StatusMeterLayout.barBands(usedPercent: 43, headroomPercent: nil)
+        XCTAssertFalse(noHeadroom.showsIntermediate)
+        XCTAssertEqual(noHeadroom.intermediateWidth, 0, accuracy: 0.0001)
+        XCTAssertEqual(noHeadroom.fillWidth, 28 * 0.43, accuracy: 0.0001)
+
+        let headroomBelow = StatusMeterLayout.barBands(usedPercent: 70, headroomPercent: 0)
+        XCTAssertFalse(headroomBelow.showsIntermediate)
+        XCTAssertEqual(headroomBelow.intermediateWidth, 0, accuracy: 0.0001)
+        XCTAssertEqual(headroomBelow.fillWidth, 28 * 0.70, accuracy: 0.0001)
+
+        let equal = StatusMeterLayout.barBands(usedPercent: 40, headroomPercent: 40)
+        XCTAssertFalse(equal.showsIntermediate)
+        XCTAssertEqual(equal.intermediateWidth, 0, accuracy: 0.0001)
+    }
+
+    func testRendererAlphasAreOrderedTrackIntermediateFill() {
+        // Intermediate shade must sit between unfilled track and used fill.
+        XCTAssertLessThan(StatusMeterImageRenderer.trackAlpha, StatusMeterImageRenderer.intermediateAlpha)
+        XCTAssertLessThan(StatusMeterImageRenderer.intermediateAlpha, StatusMeterImageRenderer.fillAlpha)
+    }
+
+    func testRendererAcceptsHeadroomParameter() {
+        let withHeadroom = StatusMeterImageRenderer.makeImage(
+            percentText: "20%",
+            usedPercent: 20,
+            headroomPercent: 60,
+            logo: nil
+        )
+        let without = StatusMeterImageRenderer.makeImage(
+            percentText: "20%",
+            usedPercent: 20,
+            headroomPercent: nil,
+            logo: nil
+        )
+        XCTAssertTrue(withHeadroom.isTemplate)
+        XCTAssertTrue(without.isTemplate)
+        XCTAssertEqual(withHeadroom.size.width, without.size.width, accuracy: 0.01)
+        // Geometry still decides bands via shipped helper.
+        let bands = StatusMeterLayout.barBands(usedPercent: 20, headroomPercent: 60)
+        XCTAssertTrue(bands.showsIntermediate)
+    }
+
     func testCanvasWidthGrowsWithPercentText() {
         // Without the bar, width tracks text length.
         let narrow = StatusMeterLayout.canvasWidth(percentText: "9%", showsBar: false)

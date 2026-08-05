@@ -111,6 +111,23 @@ final class AppModelPaceTests: XCTestCase {
         }
         XCTAssertEqual(headroom, 60, accuracy: 1.0)
         XCTAssertEqual(model.paceHeadroomDisplayLine, "Headroom: ~60% unused at reset")
+        // Menubar meter path: headroom > used → intermediate band via shipped layout helper.
+        XCTAssertTrue(
+            StatusMeterLayout.showsHeadroomIntermediate(
+                usedPercent: 20,
+                headroomPercent: model.paceHeadroomPercent
+            )
+        )
+        let bands = StatusMeterLayout.barBands(
+            usedPercent: 20,
+            headroomPercent: model.paceHeadroomPercent
+        )
+        XCTAssertTrue(bands.showsIntermediate)
+        XCTAssertGreaterThan(bands.intermediateWidth, 0)
+        // Image build with model-supplied headroom must succeed (template meter).
+        let image = model.statusMeterImage
+        XCTAssertTrue(image.isTemplate)
+        XCTAssertGreaterThan(image.size.width, 0)
     }
 
     func testInsufficientWhenNoPeriodBounds() async {
