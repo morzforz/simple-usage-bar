@@ -22,6 +22,11 @@ public enum UsageDisplayFormatter {
         min(1, max(0, usedPercent / 100))
     }
 
+    /// Pixel/point width of the filled portion of a bar with the given total width.
+    public static func barFillWidth(usedPercent: Double, totalWidth: Double) -> Double {
+        max(0, barFillFraction(usedPercent: usedPercent) * totalWidth)
+    }
+
     /// Placeholder percent text for non-ready menubar states.
     public static func statusPlaceholder(for loading: Bool) -> String {
         loading ? "…" : "—"
