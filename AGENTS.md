@@ -45,9 +45,17 @@ Agents **must** follow this workflow. Direct commits to `main` are forbidden exc
   `fix: prevent null pointer on missing config`  
   `chore: update INDEX.md with new systems doc`
 
-### Merging Back to `main`
+### Merging Back to `main` (proactive branch hygiene)
 
 Agents do **not** force-push or rewrite `main` history.
+
+**Default posture: merge completed work without waiting to be asked.** When a feature, fix, chore, or other scoped task is **done** — acceptance criteria met, validation green, commits in good shape, no intentional follow-ups left on that branch — agents **must** integrate it into `main` promptly as part of finishing the task. Do not leave finished branches unmerged for the user to discover later.
+
+“Done enough to merge” means all of the following:
+- The branch’s scoped work is complete (not a half-implemented WIP commit)
+- Project validation passes on the branch
+- No known blockers that would leave `main` broken or misleading
+- The agent is not mid-plan with more checklist items still required for that same branch
 
 Preferred path (when the environment supports it):
 1. Ensure the feature branch is clean and validation passes.
@@ -55,15 +63,18 @@ Preferred path (when the environment supports it):
 3. `git merge --no-ff feature/<name>` (or `git rebase main` then fast-forward if the history is linear and the agent is confident).
 4. Re-run validation on `main` after the merge.
 5. Only then delete the feature branch: `git branch -d feature/<name>`
+6. Push `main` to `origin` when a remote is configured and the environment allows it (this repo is single-user; do not force-push).
 
-If a pull-request / code-review flow is active in the repo, prefer opening a PR instead of a local merge. Agents should still leave the branch in a review-ready state (validation green, clear commit messages, no WIP commits).
+If a pull-request / code-review flow is active in the repo, prefer opening a PR instead of a local merge — but still treat “open a ready PR” as the completion step, not parking an unmerged branch silently. Agents should leave the branch in a review-ready state (validation green, clear commit messages, no WIP commits).
+
+**Do not merge** when work is incomplete, validation fails, or the user explicitly asked to keep the change on a branch / unmerged. In those cases, leave the branch as-is and state what remains.
 
 ### Conflict & Safety Rules
 
 - Never resolve merge conflicts by blindly accepting “ours” or “theirs” on files that contain critical identifiers, configuration, generated references, binary data, or complex structured formats that text merges can corrupt. Prefer regenerating or carefully reconciling such files after the textual conflict is cleaned.
 - If a conflict touches complex structured files (configs, schemas, serialized data), treat it as a high-risk change: re-validate thoroughly before considering the merge done.
 - Agents must not `git push --force` to `main` or to any shared branch.
-- When in doubt, leave the feature branch unmerged and document the exact state + remaining work in the commit message or a short note in `INDEX.md` / the relevant design doc.
+- When in doubt about completeness or safety, leave the feature branch unmerged and document the exact state + remaining work in the commit message or a short note in `INDEX.md` / the relevant design doc — but do **not** use “when in doubt” as an excuse to skip merging clearly finished work.
 
 ### LFS & Binary Hygiene
 
