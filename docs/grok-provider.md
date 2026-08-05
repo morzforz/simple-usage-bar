@@ -83,7 +83,7 @@ grok logout           # clears credentials
 | Priority | Source | V1? | Notes |
 |----------|--------|-----|--------|
 | 1 | **Billing gRPC-web** `GetGrokCreditsConfig` with CLI bearer | **Yes** | Validated with CLI token alone |
-| 2 | ACP `x.ai/billing` over `grok agent stdio` | Future | Returns `-32601 Method not found` on 0.2.118 |
+| 2 | ACP `x.ai/billing` over `grok agent stdio` | **Tabled** | Returns `-32601 Method not found` on 0.2.x; not scheduled |
 | 3 | Browser cookies on grok.com | **No** | Explicitly out of scope (no web auth) |
 | 4 | Local session `signals.json` | **No** for quota | Context/token stats only; not subscription pool |
 
@@ -209,7 +209,7 @@ message Timestamp {
 3. Accept both framed gRPC-web and (if ever seen) raw protobuf bodies.
 4. Unit-test against **binary fixtures** checked into `SimpleUsageBarTests/Fixtures/`.
 5. If field 1 is absent but period timestamps exist, use **0%** (zero usage), not a hard failure — matches observed “omitted means zero” behavior in sibling tools.
-6. Secondary field-7 buckets are **not** shown in v1 UI. They are a **plausible** per-product / per-surface breakdown (e.g. Build vs Chat vs Imagine) matching the grok.com Usage UI shape, but type ids are reverse-engineered only — do not surface until mapped.
+6. Secondary field-7 buckets are **tabled** (not on the active roadmap). They are a **plausible** per-product / per-surface breakdown (e.g. Build vs Chat vs Imagine), but type ids are unmapped — do not surface until deliberately revived.
 
 ---
 

@@ -19,6 +19,6 @@ Single source of truth for major project documents. Agents and humans should con
 
 ## Status
 
-- **Phase:** P2 polish shipped (auth watch, band colors, launch-at-login, README); further roadmap is optional notifications/providers.
+- **Phase:** P2 polish shipped; near-term roadmap is optional notifications (and medium-term packaging/providers). Secondary buckets + agent-stdio billing are tabled.
 - **V1 scope:** macOS menubar app; Grok Code only; CLI auth only.
 - **App sources:** `SimpleUsageBar/` + `SimpleUsageBar.xcodeproj` + `SimpleUsageBarTests/`

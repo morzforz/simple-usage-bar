@@ -412,7 +412,8 @@ Deferred / decided:
 
 1. **OIDC refresh in-app — out of scope.** App is used with Grok Build; CLI keeps `auth.json` warm; watcher reloads on change.
 2. Official public usage API from xAI — switch when/if available.
-3. Multi-bucket percents (protobuf field 7) — possible per-service breakdown (Build / Chat / Imagine, etc.); exploratory only until type ids are mapped.
+3. **Secondary protobuf buckets (field 7) — tabled.** Plausible per-service breakdown; not scheduled until type ids are mapped.
+4. **Agent stdio `x.ai/billing` — tabled.** HTTP billing path is sufficient; revisit only if stdio becomes available and clearly better.
 
 ---
 
