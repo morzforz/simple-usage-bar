@@ -21,7 +21,7 @@ enum StatusMeterImageRenderer {
     /// Unfilled track alpha (lightest band).
     static let trackAlpha: CGFloat = 0.28
     /// Intermediate headroom band — between track and fill (subtle, slightly dimmer than mid).
-    static let intermediateAlpha: CGFloat = 0.40
+    static let intermediateAlpha: CGFloat = 0.35
     /// Used fill alpha (darkest band).
     static let fillAlpha: CGFloat = 0.95
 
