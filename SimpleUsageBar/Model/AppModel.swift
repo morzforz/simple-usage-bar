@@ -104,11 +104,15 @@ final class AppModel {
 
     /// Composited **template** status image for MenuBarExtra (logo + percent + optional bar).
     /// Monochrome only — system tints black/white against the menu bar (no band colors).
+    /// When pace headroom exceeds current used %, an intermediate band is drawn on the bar.
     var statusMeterImage: NSImage {
         let used: Double? = showsStatusUsageBar ? state.snapshot?.usedPercent : nil
+        // Only feed headroom when a usage bar is shown; layout decides visibility.
+        let headroom: Double? = showsStatusUsageBar ? paceHeadroomPercent : nil
         return StatusMeterImageRenderer.makeImage(
             percentText: statusItemTitle,
-            usedPercent: used
+            usedPercent: used,
+            headroomPercent: headroom
         )
     }
 
