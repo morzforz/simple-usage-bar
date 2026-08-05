@@ -10,8 +10,6 @@ Post-MVP directions for Simple Usage Bar. **V1 stays Grok-only and CLI-auth-only
 |------|--------|
 | README | **Done** (P2) |
 | Threshold notifications | Optional macOS notification at 80% / 100% used |
-| Agent stdio billing | Prefer `x.ai/billing` when Grok Build exposes it on agent-stdio |
-| Secondary buckets | Protobuf field-7 repeated windows — **plausible** per-product breakdown (Build / Chat / Imagine / …); keep exploratory until type ids are mapped against grok.com Usage UI |
 
 ---
 
@@ -24,6 +22,17 @@ Post-MVP directions for Simple Usage Bar. **V1 stays Grok-only and CLI-auth-only
 | Merge / multi-icon | Only if multi-provider ships |
 | Developer ID + notarization | For shareable `.app` |
 | Sparkle updates | After notarized releases exist |
+
+---
+
+## Tabled (not active)
+
+Parked until we choose to revisit; not scheduled.
+
+| Item | Notes |
+|------|--------|
+| Secondary protobuf buckets | Field-7 type/percent rows — plausible Build / Chat / Imagine breakdown; needs type-id mapping vs grok.com Usage before any UI |
+| Agent stdio billing | ACP `x.ai/billing` over `grok agent stdio` — still Method not found on current CLI; HTTP `GetGrokCreditsConfig` is the supported path |
 
 ---
 
