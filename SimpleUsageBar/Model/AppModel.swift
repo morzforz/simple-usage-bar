@@ -191,6 +191,11 @@ final class AppModel {
         min(max(state.snapshot?.usedPercent ?? 0, 0), 100)
     }
 
+    /// Optional headroom % for the popover multi-segment bar (same value as pace headroom).
+    var popoverBarHeadroomPercent: Double? {
+        paceHeadroomPercent
+    }
+
     // MARK: - Lifecycle
 
     func start() {

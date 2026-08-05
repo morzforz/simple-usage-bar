@@ -36,10 +36,11 @@ struct PopoverContentView: View {
                     .foregroundStyle(.secondary)
             }
 
-            ProgressView(value: model.progressValue, total: 100)
-                .progressViewStyle(.linear)
-                .tint(model.usesBandTint ? model.usageBand.color : Color.accentColor)
-                .accessibilityIdentifier("usageProgress")
+            PopoverUsageBar(
+                usedPercent: model.progressValue,
+                headroomPercent: model.popoverBarHeadroomPercent,
+                usedFillColor: model.usesBandTint ? model.usageBand.color : Color.accentColor
+            )
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("Resets \(model.resetRelativeText)")

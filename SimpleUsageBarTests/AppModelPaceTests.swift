@@ -128,6 +128,15 @@ final class AppModelPaceTests: XCTestCase {
         let image = model.statusMeterImage
         XCTAssertTrue(image.isTemplate)
         XCTAssertGreaterThan(image.size.width, 0)
+        // Popover bar path uses the same headroom value + yellow-orange segment rules.
+        XCTAssertEqual(model.popoverBarHeadroomPercent, model.paceHeadroomPercent)
+        XCTAssertTrue(
+            PopoverUsageBarStyle.showsHeadroomSegment(
+                usedPercent: model.progressValue,
+                headroomPercent: model.popoverBarHeadroomPercent
+            )
+        )
+        XCTAssertEqual(PopoverUsageBarStyle.headroomStyleName, "yellowOrange")
     }
 
     func testInsufficientWhenNoPeriodBounds() async {

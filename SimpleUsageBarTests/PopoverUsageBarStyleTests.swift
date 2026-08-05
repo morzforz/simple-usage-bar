@@ -1,0 +1,71 @@
+// PopoverUsageBarStyleTests.swift
+// Drives shipped popover bar style + band geometry (yellow-orange headroom segment).
+
+import XCTest
+@testable import SimpleUsageBar
+
+final class PopoverUsageBarStyleTests: XCTestCase {
+    func testHeadroomStyleNameIsYellowOrange() {
+        XCTAssertEqual(PopoverUsageBarStyle.headroomStyleName, "yellowOrange")
+    }
+
+    func testHeadroomColorSRGBIsYellowOrange() {
+        let c = PopoverUsageBarStyle.headroomColorSRGB
+        // Yellow-orange: high red, mid green, low blue — not pure yellow and not monochrome gray.
+        XCTAssertEqual(c.red, 1.0, accuracy: 0.001)
+        XCTAssertEqual(c.green, 0.55, accuracy: 0.001)
+        XCTAssertEqual(c.blue, 0.12, accuracy: 0.001)
+        XCTAssertGreaterThan(c.red, c.green)
+        XCTAssertGreaterThan(c.green, c.blue)
+    }
+
+    func testHeadroomColorMatchesSRGBToken() {
+        // Color view token must stay in lockstep with testable sRGB components.
+        let c = PopoverUsageBarStyle.headroomColorSRGB
+        XCTAssertEqual(c.red, 1.0, accuracy: 0.001)
+        // Used-fill band yellow (.yellow) is not our headroom token name.
+        XCTAssertNotEqual(PopoverUsageBarStyle.headroomStyleName, UsageBand.elevated.styleName)
+        XCTAssertNotEqual(PopoverUsageBarStyle.headroomStyleName, UsageBand.normal.styleName)
+        XCTAssertNotEqual(PopoverUsageBarStyle.headroomStyleName, UsageBand.high.styleName)
+    }
+
+    func testShowsHeadroomSegmentMatchesMenubarRule() {
+        XCTAssertTrue(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 20, headroomPercent: 60))
+        XCTAssertFalse(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 70, headroomPercent: 0))
+        XCTAssertFalse(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 40, headroomPercent: nil))
+        XCTAssertFalse(PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 50, headroomPercent: 50))
+        // Same gate as menubar pure helper.
+        XCTAssertEqual(
+            PopoverUsageBarStyle.showsHeadroomSegment(usedPercent: 20, headroomPercent: 60),
+            StatusMeterLayout.showsHeadroomIntermediate(usedPercent: 20, headroomPercent: 60)
+        )
+    }
+
+    func testBandsReuseShippedLayoutGeometry() {
+        let track: CGFloat = 200
+        let bands = PopoverUsageBarStyle.bands(
+            usedPercent: 20,
+            headroomPercent: 60,
+            trackWidth: track
+        )
+        let expected = StatusMeterLayout.barBands(
+            usedPercent: 20,
+            headroomPercent: 60,
+            trackWidth: track
+        )
+        XCTAssertEqual(bands, expected)
+        XCTAssertTrue(bands.showsIntermediate)
+        XCTAssertEqual(bands.fillWidth, track * 0.20, accuracy: 0.001)
+        XCTAssertEqual(bands.intermediateWidth, track * 0.40, accuracy: 0.001)
+    }
+
+    func testBandsOmitWhenHeadroomNilOrNotGreater() {
+        let nilHead = PopoverUsageBarStyle.bands(usedPercent: 43, headroomPercent: nil, trackWidth: 100)
+        XCTAssertFalse(nilHead.showsIntermediate)
+        XCTAssertEqual(nilHead.intermediateWidth, 0, accuracy: 0.001)
+
+        let low = PopoverUsageBarStyle.bands(usedPercent: 70, headroomPercent: 10, trackWidth: 100)
+        XCTAssertFalse(low.showsIntermediate)
+        XCTAssertEqual(low.intermediateWidth, 0, accuracy: 0.001)
+    }
+}
