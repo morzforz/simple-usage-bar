@@ -124,4 +124,28 @@ final class PopoverUsageBarStyleTests: XCTestCase {
         XCTAssertTrue(text.contains("15%"))
         XCTAssertTrue(text.contains("55%"))
     }
+
+    func testNestedPopoverIsDeferredWithReason() {
+        // Nested tip popover over MenuBarExtra is intentionally not wired (focus/dismiss races).
+        XCTAssertFalse(PopoverUsageBarStyle.usesNestedPopover)
+        XCTAssertFalse(PopoverUsageBarStyle.nestedPopoverDeferralReason.isEmpty)
+        XCTAssertTrue(
+            PopoverUsageBarStyle.nestedPopoverDeferralReason.lowercased().contains("menubarextra")
+                || PopoverUsageBarStyle.nestedPopoverDeferralReason.lowercased().contains("nested")
+        )
+    }
+
+    func testHoverDebounceDelaysStabilizeShowAndHide() {
+        // Hide delay must be longer than show so bar→tip motion does not flicker.
+        XCTAssertGreaterThan(
+            PopoverUsageBarStyle.hoverHideDelayNanoseconds,
+            PopoverUsageBarStyle.hoverShowDelayNanoseconds
+        )
+        XCTAssertGreaterThan(PopoverUsageBarStyle.hoverShowDelayNanoseconds, 0)
+        XCTAssertGreaterThan(PopoverUsageBarStyle.barVisualHeight, 0)
+        XCTAssertGreaterThan(PopoverUsageBarStyle.barHoverVerticalPadding, 0)
+        // Contiguous hover region policy: tip is in-window callout, not a nested popover.
+        XCTAssertTrue(PopoverUsageBarStyle.presentsTooltipAsHoverCallout)
+        XCTAssertFalse(PopoverUsageBarStyle.usesNestedPopover)
+    }
 }

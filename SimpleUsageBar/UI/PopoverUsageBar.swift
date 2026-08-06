@@ -1,10 +1,13 @@
 // PopoverUsageBar.swift
 // Multi-segment usage bar for the popover: used fill + optional yellow-orange headroom + track.
 //
-// Hover explanation: SwiftUI `.help` does not reliably show inside MenuBarExtra `.window`
-// popovers (especially on a thin GeometryReader). We therefore:
-// 1) present an in-popover hover callout with the pure tooltip string (primary, visible), and
-// 2) bridge AppKit `toolTip` as a secondary channel where the system allows it.
+// Hover tip presentation (MenuBarExtra `.window`):
+// - SwiftUI `.help` is unreliable here.
+// - Nested SwiftUI `.popover` over MenuBarExtra is deferred (focus/dismiss races; see
+//   PopoverUsageBarStyle.nestedPopoverDeferralReason).
+// - In-window callout: tip is a *child* of the same hover-tracked region as the bar so
+//   pointer motion onto the tip does not flip hover off (classic flicker cause).
+// - Debounced show/hide without layout animations avoids hang from rapid enter/exit.
 
 import SwiftUI
 
@@ -15,52 +18,72 @@ struct PopoverUsageBar: View {
     var usedFillColor: Color
 
     @State private var isHovering = false
+    @State private var hoverTask: Task<Void, Never>?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        // Single contiguous hover region: bar + tip card (when shown).
+        VStack(alignment: .leading, spacing: 8) {
             barTrack
-                // Taller hit target than the 10pt visual so hover is easy to engage.
-                .frame(height: 10)
-                .padding(.vertical, 5)
+                .frame(height: PopoverUsageBarStyle.barVisualHeight)
                 .frame(maxWidth: .infinity)
-                .contentShape(Rectangle())
-                .onHover { hovering in
-                    withAnimation(.easeInOut(duration: 0.12)) {
-                        isHovering = hovering
-                    }
-                }
-                // Secondary: AppKit tooltip when the hosting window supports it.
-                .background {
-                    AppKitToolTipBridge(text: tooltipText)
-                }
 
             if isHovering {
-                Text(tooltipText)
-                    .font(.caption2)
-                    .foregroundStyle(.primary)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 6)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(Color(nsColor: .controlBackgroundColor))
-                            .shadow(color: .black.opacity(0.12), radius: 3, y: 1)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
-                    )
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                    .accessibilityIdentifier("usageProgressTooltip")
+                tipCallout
             }
+        }
+        // Comfortable padding expands the hit target without competing NSView hit-tests.
+        .padding(.vertical, PopoverUsageBarStyle.barHoverVerticalPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+        .onHover { hovering in
+            scheduleHover(hovering)
+        }
+        .onDisappear {
+            hoverTask?.cancel()
+            hoverTask = nil
+            isHovering = false
         }
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier("usageProgress")
         .accessibilityLabel(accessibilitySummary)
         .accessibilityHint(tooltipText)
         .accessibilityValue(isHovering ? tooltipText : "")
+    }
+
+    /// Debounced hover updates — cancels prior work so rapid enter/exit does not thrash layout.
+    private func scheduleHover(_ hovering: Bool) {
+        hoverTask?.cancel()
+        let delay = hovering
+            ? PopoverUsageBarStyle.hoverShowDelayNanoseconds
+            : PopoverUsageBarStyle.hoverHideDelayNanoseconds
+        hoverTask = Task { @MainActor in
+            if delay > 0 {
+                try? await Task.sleep(nanoseconds: delay)
+            }
+            guard !Task.isCancelled else { return }
+            // No withAnimation: animated insert/remove of multi-line text caused hangs.
+            isHovering = hovering
+        }
+    }
+
+    private var tipCallout: some View {
+        Text(tooltipText)
+            .font(.caption2)
+            .foregroundStyle(.primary)
+            .multilineTextAlignment(.leading)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .fill(Color(nsColor: .controlBackgroundColor))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            )
+            .accessibilityIdentifier(PopoverUsageBarStyle.hoverCalloutAccessibilityID)
     }
 
     /// Visual multi-segment track.
@@ -94,7 +117,7 @@ struct PopoverUsageBar: View {
         }
     }
 
-    /// Shipped pure builder — used by hover callout + AppKit toolTip.
+    /// Shipped pure builder — callout content only (no separate wording path).
     private var tooltipText: String {
         PopoverUsageBarStyle.tooltipText(
             usedPercent: usedPercent,

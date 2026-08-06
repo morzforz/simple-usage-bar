@@ -82,8 +82,29 @@ public enum PopoverUsageBarStyle {
     /// Presentation strategy for bar explanation on hover.
     ///
     /// SwiftUI `.help` is unreliable inside MenuBarExtra `.window` popovers; the shipped bar
-    /// uses an in-popover hover callout (and optionally AppKit `toolTip`).
+    /// uses a stable in-window hover callout (tip is inside the same hover region as the bar).
     public static let presentsTooltipAsHoverCallout = true
+
+    /// Nested tip-as-separate-popover is **not** used for MenuBarExtra (see deferral reason).
+    public static let usesNestedPopover = false
+
+    /// Why we skip a second popover over the MenuBarExtra window.
+    ///
+    /// SwiftUI `.popover` / nested `NSPopover` over MenuBarExtra `.window` content commonly
+    /// steals key window focus, races parent dismiss, or needs AppKit window-hierarchy hacks.
+    /// A stable in-window callout (same hover region as the bar) is the non-hacky path.
+    public static let nestedPopoverDeferralReason =
+        "Nested popover over MenuBarExtra is deferred: SwiftUI/AppKit nesting races focus and parent dismiss; in-window callout is the reliable path."
+
+    /// Visual height of the usage capsule (points).
+    public static let barVisualHeight: CGFloat = 12
+    /// Extra vertical padding around the bar/tip hover region (points).
+    public static let barHoverVerticalPadding: CGFloat = 10
+
+    /// Debounce before showing the tip (nanoseconds). Dampens edge jitter.
+    public static let hoverShowDelayNanoseconds: UInt64 = 40_000_000 // 40ms
+    /// Debounce before hiding (nanoseconds). Lets the pointer enter the tip without flicker.
+    public static let hoverHideDelayNanoseconds: UInt64 = 180_000_000 // 180ms
 
     /// Accessibility / test identifier for the visible hover callout.
     public static let hoverCalloutAccessibilityID = "usageProgressTooltip"
