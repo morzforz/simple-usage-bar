@@ -32,7 +32,15 @@ Options:
 ```bash
 ./Scripts/build_and_run.sh --clean    # clean build
 ./Scripts/build_and_run.sh --no-run   # build only
-./Scripts/build_and_run.sh --release
+./Scripts/build_and_run.sh --release  # Release config (still under .derivedData)
+```
+
+**Release app** (optimized build staged under `dist/`):
+
+```bash
+./Scripts/build_release.sh
+./Scripts/build_release.sh --clean --zip   # clean + zip dist/SimpleUsageBar-<version>.zip
+./Scripts/build_release.sh --open          # launch the staged Release .app
 ```
 
 Or open `SimpleUsageBar.xcodeproj` in Xcode and run the **SimpleUsageBar** scheme.

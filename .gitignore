@@ -8,3 +8,7 @@ xcuserdata/
 *.xcscmblueprint
 .DS_Store
 .derivedData/
+.derivedData-release/
+
+# Release staging (./Scripts/build_release.sh)
+dist/
